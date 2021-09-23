@@ -6,6 +6,6 @@
 function snapped_val = snap(val, min_val, max_val, N)
 
 range = max_val - min_val;
-snapped_val = round((val - min_val) / range * N + 1);
+snapped_val = round((val - min_val) ./ range .* N + 1);
 
 end

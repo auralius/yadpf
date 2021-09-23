@@ -1,3 +1,7 @@
+% Auralius Manurung
+% ME - Universitas Pertamina
+% 2021
+
 clear
 close all
 clc
@@ -15,10 +19,12 @@ dt = 0.1;
 n_horizon = ceil(Tf/dt);
 
 % Initiate the solver
-dp = dps_2states_1input(states, U, n_horizon, @state_update_fn, @stage_cost_fn, @terminal_cost_fn);
+tic
+dps = dps_2states_1input(states, U, n_horizon, @state_update_fn, @stage_cost_fn, @terminal_cost_fn);
+toc
 
 % Extract meaningful results
-[x1_star, x2_star, u_star] = trace_optimal_policy(dp.decendent_matrix, dp.U_star_matrix, X1, X2, nX1, nX2);
+[x1_star, x2_star, u_star] = trace_optimal_policy(dps);
 
 %%
 function X_next = state_update_fn(X, U)
@@ -26,13 +32,7 @@ m = 1;
 b = 0.1;
 dt = 0.1;
 
-x = X(1);
-v = X(2);
-
-x_next = x + dt * v;
-v_next = v - b/m*v*dt + dt/m*U;
-
-X_next = [x_next, v_next];
+X_next = [X(1)+dt*X(2) X(2)-b/m*X(2)*dt+dt/m*U];
 end
 
 %%
