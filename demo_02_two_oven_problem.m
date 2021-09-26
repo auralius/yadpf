@@ -7,8 +7,8 @@ close all
 clc
 
 % Setup the states and the inputs
-X = 0:1:1000;
-U = 0:1:1000;
+X = (0:1:1000)';
+U = (0:1:1000)';
 
 % Setup the horizon
 n_horizon = 2;
@@ -44,5 +44,5 @@ T = 300;
 % Weighting factor
 r = 100;
 
-J = r * (x-T)^2;
+J = r * (x-T).^2;
 end

@@ -1,8 +1,8 @@
 function dps = trace_2X_1U(dps, x1_ic, x2_ic)
 
-x1_star = zeros(dps.n_horizon+1,1);
-x2_star = zeros(dps.n_horizon+1,1);
-u_star  = zeros(dps.n_horizon  ,1);
+x1_star = zeros(dps.n_horizon,  1);
+x2_star = zeros(dps.n_horizon,  1);
+u_star  = zeros(dps.n_horizon-1,1);
 
 % Unpack the data, field access is slow
 nX1              = length(dps.X1);
@@ -29,20 +29,13 @@ for k = 1 : n_horizon
             
     x1_star(k) = x1;
     x2_star(k) = x2;
-    u_star(k)  = U_star_matrix(id, k);
+    
+    if k < n_horizon
+        u_star(k)  = U_star_matrix(id, k);
+    end
     
     id = decendent_matrix(id,k);
 end
-
-% The terminal stage
-[x_id,v_id] = ind2sub([nX1 nX2], id);
-    
-% Convert index back to actual value
-x1 = X1(x_id);
-x2 = X2(v_id);
-
-x1_star(end) = x1;
-x2_star(end) = x2;
 
 % Store the results
 dps.x1_star = x1_star;
