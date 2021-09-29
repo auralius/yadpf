@@ -24,7 +24,7 @@ dps = dps_2X_1U(X, V, F, n_horizon, @state_update_fn, @stage_cost_fn, @terminal_
 dps = trace_2X_1U(dps, 0, 0);
 
 % Do plotting here
-plot_2X_1U(dps);
+plot_2X_1U(dps, '--d');
 
 %%
 function [x1_next, x2_next] = state_update_fn(x1, x2, u)
@@ -38,7 +38,7 @@ x2_next = x2 - b/m*dt.*x2 + dt/m.*u;
 end
 
 %%
-function J = stage_cost_fn(x1, x2, u)
+function J = stage_cost_fn(x1, x2, u, k)
 a1 = 1;
 dt = 0.1;
 J = a1*dt*u.^2;

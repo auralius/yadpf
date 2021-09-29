@@ -19,15 +19,20 @@ J                = ones(N,  n_horizon).*inf; % Cost matrix
 U_star_matrix    = zeros(N, n_horizon);      % Store the optimal inputs
 decendent_matrix = zeros(N, n_horizon);      % Store the optimal next state
 
-% The terminal cost is only a function of the state variables
+fprintf('Horizons : %i stages\n',n_horizon);
+fprintf('State    : %i nodes\n', N);
+fprintf('Input    : %i nodes\n', nU);
+fprintf('Running backward dynamic programming algorithm...\n');
 tic
-fprintf('Terminal stage...\n');
+
+% The terminal cost is only a function of the state variables
 [r, c] = ind2sub([nX1 nX2], 1:N);
 J(:, n_horizon) = terminal_cost_fn(X1(r), X2(c));
 
 % The stage cost is a function of both the state variables and the input
 for k = n_horizon-1 : -1 : 1
-    fprintf('Stage-%i...\n',k);
+    ll = fprintf('Stage-%i',k);    
+
     for i = 1 :  N
         [r, c] = ind2sub([nX1 nX2], i);
         [x1_next, x2_next] = state_update_fn(repmat(X1(r),nU,1), ...
@@ -53,7 +58,9 @@ for k = n_horizon-1 : -1 : 1
         U_star_matrix(i,k) = U(J_min_idx);
         J(i,k) = J_min;
     end
+    fprintf(repmat('\b',1,ll));
 end
+fprintf('Completed\n');
 
 % Store the results
 dps.J = J;
