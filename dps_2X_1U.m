@@ -52,7 +52,7 @@ for k = n_horizon-1 : -1 : 1
         
         ind = sub2ind([nX1 nX2], r, c);
         
-        [J_min, J_min_idx] = min(stage_cost_fn(X1, X2, U) + J(ind,k+1));
+        [J_min, J_min_idx] = min(stage_cost_fn(X1(r), X2(c), U) + J(ind,k+1));
         
         decendent_matrix(i,k) = ind(J_min_idx);
         U_star_matrix(i,k) = U(J_min_idx);

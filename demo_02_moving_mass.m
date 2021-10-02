@@ -18,7 +18,8 @@ t = 0:dt:Tf;
 n_horizon = length(t);
 
 % Initiate the solver
-dps = dps_2X_1U(X, V, F, n_horizon, @state_update_fn, @stage_cost_fn, @terminal_cost_fn);
+dps = dps_2X_1U(X, V, F, n_horizon, @state_update_fn, @stage_cost_fn, ...
+                @terminal_cost_fn);
 
 % Extract meaningful results
 dps = trace_2X_1U(dps, 0, 0);
