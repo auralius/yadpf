@@ -12,14 +12,21 @@ Please check [here](https://www.mathcha.io/editor/X9JLdiqLS21T1NJNX4h6BGODQSxG7z
 
 ![](https://github.com/auralius/yadpf/blob/main/docs/two_oven_problem.png)
 
-# Moving mass (double integrator)
+## Moving mass (double integrator)
 
 ![](https://github.com/auralius/yadpf/blob/main/docs/moving_mass.png)
 
-# Optimal storage strategy (single integrator)
+## Optimal storage strategy (single integrator)
 
 ![](https://github.com/auralius/yadpf/blob/main/docs/optimal_storage_strategy.png)
 
-# Lotka-Volterra fishery
+## Lotka-Volterra fishery
 
 ![](https://github.com/auralius/yadpf/blob/main/docs/fishery.png)
+
+
+## Dubin's car
+
+![](https://github.com/auralius/yadpf/blob/main/docs/dubins_car_1.png)
+
+![](https://github.com/auralius/yadpf/blob/main/docs/dubins_car_2.png)
