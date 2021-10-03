@@ -1,10 +1,10 @@
 function dps = dps_2X_1U(X1, ...
-                         X2, ...
-                         U, ...
-                         n_horizon, ...
-                         state_update_fn, ...
-                         stage_cost_fn, ...
-                         terminal_cost_fn)
+    X2, ...
+    U, ...
+    n_horizon, ...
+    state_update_fn, ...
+    stage_cost_fn, ...
+    terminal_cost_fn)
 
 % Frequently used parameters/variables
 nU    = length(U);
@@ -23,44 +23,55 @@ fprintf('Horizons : %i stages\n',n_horizon);
 fprintf('State    : %i nodes\n', N);
 fprintf('Input    : %i nodes\n', nU);
 fprintf('Running backward dynamic programming algorithm...\n');
+
 tic
 
 % The terminal cost is only a function of the state variables
 [r, c] = ind2sub([nX1 nX2], 1:N);
 J(:, n_horizon) = terminal_cost_fn(X1(r), X2(c));
 
-% The stage cost is a function of both the state variables and the input
-for k = n_horizon-1 : -1 : 1
-    ll = fprintf('Stage-%i',k);    
+% Precompute for all nodes and all inputs
+i = repmat((1:N)', 1,nU);
+[r, c] = ind2sub([nX1 nX2], i);
+[x1_next, x2_next] = state_update_fn(X1(r), X2(c), ...
+    repmat(U',N,1));
 
-    for i = 1 :  N
-        [r, c] = ind2sub([nX1 nX2], i);
-        [x1_next, x2_next] = state_update_fn(repmat(X1(r),nU,1), ...
-            repmat(X2(c),nU,1), ...
-            U);
-        
-        % Bound the states within the minimum and maximum values
-        x1_next = min(max(x1_next, ...
-            repmat(lb(1),nU,1)), repmat(ub(1),nU,1));
-        x2_next = min(max(x2_next, ...
-            repmat(lb(2),nU,1)), repmat(ub(2),nU,1));
-        
-        r = snap(x1_next, repmat(lb(1),nU,1), repmat(ub(1),nU,1), ...
-            repmat(nX1-1,nU,1));
-        c = snap(x2_next, repmat(lb(2),nU,1), repmat(ub(2),nU,1), ...
-            repmat(nX2-1,nU,1));
-        
-        ind = sub2ind([nX1 nX2], r, c);
-        
-        [J_min, J_min_idx] = min(stage_cost_fn(X1(r), X2(c), U) + J(ind,k+1));
-        
-        decendent_matrix(i,k) = ind(J_min_idx);
-        U_star_matrix(i,k) = U(J_min_idx);
-        J(i,k) = J_min;
+% Bound the states within the minimum and maximum values
+x1_next = min(max(x1_next, ...
+    repmat(lb(1),N,nU)), repmat(ub(1),N,nU));
+x2_next = min(max(x2_next, ...
+    repmat(lb(2),N,nU)), repmat(ub(2),N,nU));
+
+r = snap(x1_next, repmat(lb(1),N,nU), repmat(ub(1),N,nU), ...
+    repmat(nX1-1,N,nU));
+c = snap(x2_next, repmat(lb(2),N,nU), repmat(ub(2),N,nU), ...
+    repmat(nX2-1,N,nU));
+
+ind = sub2ind([nX1 nX2], r, c);
+
+% Stage-wise iteration
+fprintf('Stage-');
+for k = n_horizon-1 : -1 : 1
+    ll = fprintf('%i',k);
+    
+    J_ = stage_cost_fn(X1(r), X2(c), repmat(U',N,1), k) + ...
+        reshape(J(ind,k+1),N,nU);
+    
+    [J_min, J_min_idx] = min(J_, [], 2);
+    
+    % I have tried to vectorize this section, it actually becomes
+    % slower
+    for q = 1:N
+        decendent_matrix(q,k) = ind(q,J_min_idx(q));
     end
+    
+    U_star_matrix(:,k) = U(J_min_idx);
+    J(:,k) = J_min;
+    
     fprintf(repmat('\b',1,ll));
 end
-fprintf('Completed\n');
+
+fprintf('1\nCompleted\n');
 
 % Store the results
 dps.J = J;

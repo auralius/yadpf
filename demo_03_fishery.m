@@ -33,7 +33,7 @@ plot_1X_1U(dps);
 %%
 function [x_next] = state_update_fn(x, u)
 Ts = 0.2;
-f = Ts .* (0.02 .* (x-x.^2/ 1000) - u);
+f = Ts .* (0.02 .* (x-x.^2./ 1000) - u);
 x_next = f + x; 
 end
 
