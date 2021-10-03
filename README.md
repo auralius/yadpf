@@ -1,3 +1,5 @@
+[![View YADPF - Yet Another Dynamic Programming Function on File Exchange](https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg)](https://www.mathworks.com/matlabcentral/fileexchange/100149-yadpf-yet-another-dynamic-programming-function)
+
 # YADPF
 
 Yet Another Dynamic Programming Function
