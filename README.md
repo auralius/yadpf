@@ -30,3 +30,9 @@ Please check [here](https://www.mathcha.io/editor/X9JLdiqLS21T1NJNX4h6BGODQSxG7z
 ![](https://github.com/auralius/yadpf/blob/main/docs/dubins_car_1.png)
 
 ![](https://github.com/auralius/yadpf/blob/main/docs/dubins_car_2.png)
+
+## Find a shortest path in a terrain
+
+![](https://github.com/auralius/yadpf/blob/main/docs/terrain_shortest_path_1.png)
+
+![](https://github.com/auralius/yadpf/blob/main/docs/terrain_shortest_path_2.png)
