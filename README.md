@@ -38,3 +38,9 @@ Please check [here](https://www.mathcha.io/editor/X9JLdiqLS21T1NJNX4h6BGODQSxG7z
 ![](https://github.com/auralius/yadpf/blob/main/docs/terrain_shortest_path_1.png)
 
 ![](https://github.com/auralius/yadpf/blob/main/docs/terrain_shortest_path_2.png)
+
+## Sutton's mountain car problem
+
+![](https://github.com/auralius/yadpf/blob/main/docs/mountain_car.png)
+
+![](https://github.com/auralius/yadpf/blob/main/docs/mountain_car.gif)
