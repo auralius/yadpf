@@ -25,7 +25,7 @@ Ux  = [-1 0 1]';
 Uy  = [-1 0 1]';
 
 %  The horizon isn't yet known, let us just guess
-n_horizon = 500;
+n_horizon = 150;
 
 % Initiate the solver
 dps = dps_2X_2U(X, Y, Ux, Uy, n_horizon, @state_update_fn, ...
@@ -69,9 +69,8 @@ y_to = min(max(y_to,1),c);
 
 dh = get_height_difference(x, y, x_to, y_to);
 
-w_1 = 1;
-w_2 = 1;
-J = w_1 .* ones(size(ux)) + w_2 .* max(dh,0);
+w = 2;
+J = ux.^2 + uy.^2 + w.*max(dh,0);
 
 end
 
@@ -82,8 +81,8 @@ k1 = 100;
 k2 = 100;
 
 % Final states
-xf = 128;
-yf = 128;
+xf = 65;
+yf = 80;
 
 J = k1.*(x-xf).^2 + k2.*(y-yf).^2;
 end
