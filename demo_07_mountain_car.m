@@ -12,7 +12,7 @@ V = ( -0.07 : 0.001 : 0.07)';
 U = [-1 0 1]';
 
 % Setup the horizon
-n_horizon = 100;
+n_horizon = 200;
 
 % Initiate the solver
 dps = dps_2X_1U(P, V, U, n_horizon, @state_update_fn, @stage_cost_fn, ...
@@ -39,7 +39,7 @@ end
 
 %%
 function J = stage_cost_fn(x1, x2, u, k)
-J = u.^2;
+J = u.^2 + (x1-0.5).^2;
 end
 
 %%
@@ -76,7 +76,8 @@ for k = 1 : dps.n_horizon
     % Plug the XStar to the equation of the mountain
     set(car, 'YData', sin(3*dps.x1_star(k))); 
     
-    htext1.String = ['Stage-', num2str(k), ', x = ', num2str(dps.x1_star(k)),', v = ', num2str(dps.x2_star(k))] ;
+    htext1.String = ['Stage-', num2str(k), ', x = ', ...
+        num2str(dps.x1_star(k)),', v = ', num2str(dps.x2_star(k))] ;
     
     if k < dps.n_horizon % input is one-data-point shorter
         htext2.String = ['u = ', num2str(dps.u_star(k))];
