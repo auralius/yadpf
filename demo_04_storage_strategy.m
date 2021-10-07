@@ -24,7 +24,7 @@ n_horizon = length(T_vect);
 dps = dps_1X_1U(X, U, n_horizon, @state_update_fn, @stage_cost_fn, @terminal_cost_fn);
 
 % Extract meaningful results for a given initial condition
-x0 = 0;
+x0 = 1;
 dps = trace_1X_1U(dps, x0);
 
 % Do plotting here

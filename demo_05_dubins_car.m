@@ -1,6 +1,8 @@
 % Auralius Manurung
 % ME - Universitas Pertamina
 % 2021
+%
+% Dubin's car
 
 clear
 close all

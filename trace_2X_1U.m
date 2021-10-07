@@ -5,13 +5,13 @@ x2_star = zeros(dps.n_horizon,  1);
 u_star  = zeros(dps.n_horizon-1,1);
 
 % Unpack the data, field access is slow
-nX1              = length(dps.X1);
-nX2              = length(dps.X2);
-n_horizon        = dps.n_horizon;
-X1               = dps.X1;
-X2               = dps.X2;
-U_star_matrix    = dps.U_star_matrix;
-decendent_matrix = dps.decendent_matrix;
+nX1               = length(dps.X1);
+nX2               = length(dps.X2);
+n_horizon         = dps.n_horizon;
+X1                = dps.X1;
+X2                = dps.X2;
+U_star_matrix     = dps.U_star_matrix;
+descendant_matrix = dps.descendant_matrix;
 
 % Initial stage is given by the IC
 r = snap(x1_ic, min(X1), max(X1), nX1-1);
@@ -34,7 +34,7 @@ for k = 1 : n_horizon
         u_star(k)  = U_star_matrix(id, k);
     end
     
-    id = decendent_matrix(id,k);
+    id = descendant_matrix(id,k);
 end
 
 % Store the results

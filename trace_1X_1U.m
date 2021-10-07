@@ -4,11 +4,11 @@ x_star = zeros(dps.n_horizon,   1);
 u_star = zeros(dps.n_horizon-1, 1);
 
 % Unpack the data, field access is slow
-nX               = length(dps.X);
-n_horizon        = dps.n_horizon;
-X                = dps.X;
-U_star_matrix    = dps.U_star_matrix;
-decendent_matrix = dps.decendent_matrix;
+nX                = length(dps.X);
+n_horizon         = dps.n_horizon;
+X                 = dps.X;
+U_star_matrix     = dps.U_star_matrix;
+descendant_matrix = dps.descendant_matrix;
 
 id = snap(x_ic, min(X), max(X), nX-1);
 for k = 1 : n_horizon             
@@ -18,7 +18,7 @@ for k = 1 : n_horizon
         u_star(k) = U_star_matrix(id, k);    
     end
     
-    id = decendent_matrix(id,k);
+    id = descendant_matrix(id,k);
 end
 
 
