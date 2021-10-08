@@ -1,6 +1,11 @@
 % Auralius Manurung
 % ME - Universitas Pertamina
 % 2021
+% 
+% Two-Oven Problem
+%
+% https://www.mit.edu/~dimitrib/DP_Slides_2015.pdf
+% See page 22: LINEAR-QUADRATIC ANALYTICAL EXAMPLE
 
 clear
 close all

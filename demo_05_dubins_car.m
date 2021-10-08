@@ -3,6 +3,10 @@
 % 2021
 %
 % Dubin's car
+%
+% Jonsson, U. (2010). Optimal Control. 
+% See Example 2, page 3
+% https://www.math.kth.se/optsyst/grundutbildning/kurser/SF2852/LecturenotesScanned.pdf
 
 clear
 close all

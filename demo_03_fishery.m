@@ -4,6 +4,10 @@
 % 2021
 %
 % Lotka-Volterra Fishery Problem
+%
+% Sundstrom, O., & Guzzella, L. (2009). A Generic Dynamic Programming 
+% Matlab Function. 18th IEEE International Conference on Control 
+% Applications, 7, 1625–1630. https://doi.org/10.1109/CCA.2009.5281131
 
 %%
 clear

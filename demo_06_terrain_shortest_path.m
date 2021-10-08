@@ -14,8 +14,8 @@ global X Y Ux Uy T terrain_size;
 
 % Terrian1.mat, from 1 to 4225 (64x64)
 % Terrian2.mat, from 1 to 16641 (129x129)
-%load ('Terrain1.mat');
-load ('Terrain2.mat');
+load ('Terrain1.mat');
+%load ('Terrain2.mat');
 terrain_size = size(T);
 
 % Setup the states and the inputs
@@ -81,8 +81,8 @@ k1 = 100;
 k2 = 100;
 
 % Final states
-xf = 65;
-yf = 80;
+xf = 50;
+yf = 60;
 
 J = k1.*(x-xf).^2 + k2.*(y-yf).^2;
 end

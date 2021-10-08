@@ -4,7 +4,10 @@
 % 2021
 %
 % Optimal storage strategy
-
+%
+% Jonsson, U. (2010). Optimal Control. 
+% See Example 1, page 2
+% https://www.math.kth.se/optsyst/grundutbildning/kurser/SF2852/LecturenotesScanned.pdf
 %%
 clear
 close all
@@ -46,8 +49,8 @@ end
 
 %%
 function J = terminal_cost_fn(x)
-r = 1000;
+r = 100;
 xf = 200;
-Ts = 1;
-J = Ts*r .* (xf-x).^2;
+
+J = r .* (xf-x).^2;
 end
