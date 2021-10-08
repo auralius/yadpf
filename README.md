@@ -44,3 +44,6 @@ Please check [here](https://www.mathcha.io/editor/X9JLdiqLS21T1NJNX4h6BGODQSxG7z
 ![](https://github.com/auralius/yadpf/blob/main/docs/mountain_car.png)
 
 ![](https://github.com/auralius/yadpf/blob/main/docs/mountain_car.gif)
+
+## Two-tank problen
+![](https://github.com/auralius/yadpf/blob/main/docs/two_tank_problem.png)
