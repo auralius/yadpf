@@ -9,18 +9,22 @@ n_horizon         = dps.n_horizon;
 X                 = dps.X;
 U_star_matrix     = dps.U_star_matrix;
 descendant_matrix = dps.descendant_matrix;
+state_update_fn   = dps.state_update_fn;
 
 id = snap(x_ic, min(X), max(X), nX-1);
-for k = 1 : n_horizon             
-    x_star(k) = X(id);
-    
-    if (k < n_horizon)
-        u_star(k) = U_star_matrix(id, k);    
-    end
+x_star(1) = X(id);
+
+% Trace to the end horizon
+fprintf('Froward tracing, please wait...\n')
+
+for k = 1 : n_horizon-1    
+    u_star(k) = U_star_matrix(id, k);    
+    x_star(k+1) = state_update_fn(x_star(k), u_star(k));    
     
     id = descendant_matrix(id,k);
 end
 
+fprintf('Complete!\n');
 
 % Store the results
 dps.x_star = x_star;

@@ -36,9 +36,7 @@ descendant_matrix = zeros(nX, n_horizon);      % Store the optimal next state
 fprintf('Horizons : %i stages\n',n_horizon);
 fprintf('State    : %i nodes\n', nX);
 fprintf('Input    : %i nodes\n', nU);
-fprintf('Running backward dynamic programming algorithm...\n');
-
-tic
+fprintf('Pre-calculation, please wait...\n')
 
 % The terminal cost is only a function of the state variables
 J(:, n_horizon) = terminal_cost_fn(X);
@@ -53,11 +51,17 @@ x_next_post_boundary = min(max(x_next, lb), ub);
 is_infeasible = (x_next~=x_next_post_boundary);
 
 ind = snap(x_next_post_boundary, ...
-    repmat(lb,nX,nU), repmat(ub,nX,nU), repmat(nX-1,nX,nU));
+    repmat(lb,nX,nU), repmat(ub,nX,nU), repmat(nX,nX,nU));
+
+fprintf('Completed!\n');
 
 % Stage-wise iteration
+fprintf('Running backward dynamic programming algorithm...\n');
 fprintf('Stage-');
+ll = 0;
+
 for k = n_horizon-1 : -1 : 1
+    fprintf(repmat('\b',1,ll));
     ll = fprintf('%i',k);
     
     J_ = stage_cost_fn(X(i), repmat(U',nX,1), k) ...
@@ -69,13 +73,9 @@ for k = n_horizon-1 : -1 : 1
         
     U_star_matrix(:,k) = U(J_min_idx);
     J(:,k) = J_min;
-    
-    fprintf(repmat('\b',1,ll));
 end
 
-fprintf('1\nCompleted\n');
-
-toc
+fprintf('\nCompleted!\n');
 
 % Store the results
 dps.J = J;
@@ -86,5 +86,6 @@ dps.U_star_matrix = U_star_matrix;
 dps.n_horizon           = n_horizon;
 dps.X                   = X;
 dps.U                   = U;
+dps.state_update_fn     = state_update_fn;
 
 end

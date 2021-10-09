@@ -39,20 +39,16 @@ end
 
 %%
 function J = stage_cost_fn(x1, x2, u, k)
-J = u.^2 + (x1-0.5).^2;
+xf = 0.5;
+vf = 0;
+
+J = u.^2 + (x1-xf).^2 + (x2-vf).^2;
 end
 
 %%
 function J = terminal_cost_fn(x1, x2)
 % Weighting factors
-a2 = 1000;
-a3 = 1000;
-
-% Final states
-xf = 0.5;
-vf = 0;
-
-J = a2.*(x1-xf).^2 + a3.*(x2-vf).^2;
+J = zeros(size(x1));
 end
 
 %%

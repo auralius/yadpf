@@ -18,13 +18,13 @@ clc
 global Ts;
 
 % Setup the states and the inputs
-X1  = ( 0 : 0.01 : 1 )';
-X2  = ( 0 : 0.01 : 1 )';
-U1  = ( 0 : 0.5 : 1 )';
-U2  = ( 0 : 0.5 : 1 )';
+X1  = ( 0 : 0.001 : 1 )';
+X2  = ( 0 : 0.001 : 1 )';
+U1  = ( 0 : 0.1  : 1 )';
+U2  = ( 0 : 0.1  : 1 )';
 
 %  Set the horizon
-Ts = 0.02;
+Ts = 0.1;
 t = 0:Ts:2;
 n_horizon = length(t);
 
@@ -35,6 +35,7 @@ dps = dps_2X_2U(X1, X2, U1, U2, n_horizon, @state_update_fn, ...
 % Extract meaningful results for a given initial condition
 x1_ic = 0;
 x2_ic = 0;
+%dps = tracen_2X_2U(dps, x1_ic, x2_ic);
 dps = trace_2X_2U(dps, x1_ic, x2_ic);
 
 % Do plotting here
@@ -52,22 +53,22 @@ end
 %%
 function J = stage_cost_fn(x1, x2, u1, u2, k)
 global Ts;
-
-J = (u1 + 1 .* abs(u2-0.5)) .* Ts;
+J = (u1 + 0.1 .* abs(u2-0.5)) .* Ts;
 end
 
 %%
 function J = terminal_cost_fn(x1, x2)
-
-
-% Weighting factors
-k1 = 100;
-k2 = 100;
-
 % Final states
 x1f = 0.5;
 x2f = 0.5;
+e1 = x1-x1f;
+e2 = x2-x2f;
 
-J = k1.*(x1-x1f).^2 + k2.*(x2-x2f).^2;
+J1 = zeros(size(x1));
+J2 = zeros(size(x2));
+
+J1(e1<0) = 1000;
+J2(e2<0) = 1000;
+J = (J1 + J2);
 end
 

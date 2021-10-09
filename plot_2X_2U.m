@@ -23,6 +23,7 @@ plot(dps.u1_star, line_style)
 xlabel(['Stage-' '$k$'], 'Interpreter','latex')
 ylabel('$u_1(k)$', 'Interpreter','latex')
 xlim([1 dps.n_horizon])
+ylim([min(dps.U1), max(dps.U1)])
 
 ax = gca;
 ax.XTick = unique(round(ax.XTick) );
@@ -32,6 +33,7 @@ plot(dps.u2_star, line_style)
 xlabel(['Stage-' '$k$'], 'Interpreter','latex')
 ylabel('$u_2(k)$', 'Interpreter','latex')
 xlim([1 dps.n_horizon])
+ylim([min(dps.U2), max(dps.U2)])
 
 ax = gca;
 ax.XTick = unique(round(ax.XTick) );

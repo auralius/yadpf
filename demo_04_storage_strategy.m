@@ -31,7 +31,7 @@ x0 = 1;
 dps = trace_1X_1U(dps, x0);
 
 % Do plotting here
-plot_1X_1U(dps);
+plot_1X_1U(dps, '-');
 
 %%
 function [x_next] = state_update_fn(x, u)

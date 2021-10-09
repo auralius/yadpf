@@ -5,6 +5,6 @@
 
 function snapped_val = snap(val, min_val, max_val, N)
 
-snapped_val = round((val - min_val) ./ (max_val - min_val) .* N + 1);
+snapped_val = ceil(((val - min_val) ./ (max_val - min_val)  .* (N-1))+1);
 
 end

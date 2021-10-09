@@ -1,4 +1,4 @@
-% Dynamic programming solver for a system with two input variable and two 
+% Dynamic programming solver for a system with two input variable and two
 % state variables
 %
 % function dps = dps_2X_2U(X1, ...
@@ -22,13 +22,13 @@
 %     terminal_cost_fn  = user defined terminal cost function
 %
 function dps = dps_2X_2U(X1, ...
-    X2, ...
-    U1, ...
-    U2, ...
-    n_horizon, ...
-    state_update_fn, ...
-    stage_cost_fn, ...
-    terminal_cost_fn)
+                         X2, ...
+                         U1, ...
+                         U2, ...
+                         n_horizon, ...
+                         state_update_fn, ...
+                         stage_cost_fn, ...
+                         terminal_cost_fn)
 
 % Frequently used parameters/variables
 nU1   = length(U1);
@@ -49,9 +49,7 @@ descendant_matrix  = zeros(nX, n_horizon);      % Store the optimal next state
 fprintf('Horizons : %i stages\n',n_horizon);
 fprintf('State    : %i nodes\n', nX);
 fprintf('Input    : %i nodes\n', nU);
-fprintf('Running backward dynamic programming algorithm...\n');
-
-tic
+fprintf('Pre-calculation, please wait...\n')
 
 % The terminal cost is only a function of the state variables
 [rx, cx] = ind2sub([nX1 nX2], 1:nX);
@@ -70,19 +68,25 @@ j = repmat((1:nU) , nX, 1);
 x1_next_post_boundary = min(max(x1_next, lb(1)), ub(1));
 x2_next_post_boundary = min(max(x2_next, lb(2)), ub(2));
 
-is_infeasible = (x1_next~=x1_next_post_boundary) .* ...
-(x2_next~=x2_next_post_boundary);
+is_infeasible = (x1_next~=x1_next_post_boundary) + ...
+    (x2_next~=x2_next_post_boundary);
 
 rx = snap(x1_next_post_boundary, repmat(lb(1),nX,nU), repmat(ub(1),nX,nU), ...
-    repmat(nX1-1,nX,nU));
+    repmat(nX1,nX,nU));
 cx = snap(x2_next_post_boundary, repmat(lb(2),nX,nU), repmat(ub(2),nX,nU), ...
-    repmat(nX2-1,nX,nU));
+    repmat(nX2,nX,nU));
 
 ind = sub2ind([nX1 nX2], rx, cx);
 
+fprintf('Complete!\n');
+
 % Stage-wise iteration
+fprintf('Running backward dynamic programming algorithm...\n');
 fprintf('Stage-');
+ll = 0;
+
 for k = n_horizon-1 : -1 : 1
+    fprintf(repmat('\b',1,ll));
     ll = fprintf('%i',k);
     
     J_ = stage_cost_fn(X1(rx), X2(cx), U1(ru), U2(cu), k) + ...
@@ -95,12 +99,10 @@ for k = n_horizon-1 : -1 : 1
     [a, b] = ind2sub([nU1 nU2], J_min_idx);
     U1_star_matrix(:,k) = U1(a);
     U2_star_matrix(:,k) = U2(b);
-    J(:,k) = J_min;
-    
-    fprintf(repmat('\b',1,ll));
+    J(:,k) = J_min;    
 end
 
-fprintf('1\nCompleted\n');
+fprintf('\nComplete!\n');
 
 % Store the results
 dps.J                 = J;
@@ -114,7 +116,6 @@ dps.X1        = X1;
 dps.X2        = X2;
 dps.U1        = U1;
 dps.U2        = U2;
-
-toc
+dps.state_update_fn     = state_update_fn;
 
 end
