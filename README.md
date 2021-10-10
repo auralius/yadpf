@@ -24,8 +24,9 @@ Please check [here](https://www.mathcha.io/editor/X9JLdiqLS21T1NJNX4h6BGODQSxG7z
 
 ## Lotka-Volterra fishery
 
-![](https://github.com/auralius/yadpf/blob/main/docs/fishery.png)
+![](https://github.com/auralius/yadpf/blob/main/docs/fishery_1.png)
 
+![](https://github.com/auralius/yadpf/blob/main/docs/fishery_2.png)
 
 ## Dubin's car
 
@@ -33,7 +34,7 @@ Please check [here](https://www.mathcha.io/editor/X9JLdiqLS21T1NJNX4h6BGODQSxG7z
 
 ![](https://github.com/auralius/yadpf/blob/main/docs/dubins_car_2.png)
 
-## Find a shortest path in a terrain
+## Find shortest path on a terrain
 
 ![](https://github.com/auralius/yadpf/blob/main/docs/terrain_shortest_path_1.png)
 
@@ -45,5 +46,5 @@ Please check [here](https://www.mathcha.io/editor/X9JLdiqLS21T1NJNX4h6BGODQSxG7z
 
 ![](https://github.com/auralius/yadpf/blob/main/docs/mountain_car.gif)
 
-## Two-tank problen
+## Two-tank problem
 ![](https://github.com/auralius/yadpf/blob/main/docs/two_tank_problem.png)
