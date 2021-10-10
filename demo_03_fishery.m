@@ -37,7 +37,7 @@ dps = trace_1X_1U(dps, x0);
 plot_1X_1U(dps, '-');
 
 % Reachability plot here
-reachability_plot_1X_1U(dps,1);
+reachability_plot_1X(dps,1);
 %%
 function [x_next] = state_update_fn(x, u)
 global Ts;

@@ -14,27 +14,26 @@ X2                = dps.X2;
 U1_star_matrix    = dps.U1_star_matrix;
 U2_star_matrix    = dps.U2_star_matrix;
 descendant_matrix = dps.descendant_matrix;
-state_update_fn   = dps.state_update_fn;
 
 % Initial stage is given by the IC
 r = snap(x1_ic, min(X1), max(X1), nX1-1);
 c = snap(x2_ic, min(X2), max(X2), nX2-1);
-
-id = sub2ind([nX1 nX2], r, c);
-[x1_id,x2_id] = ind2sub([nX1 nX2], id);
-x1_star(1) = X1(x1_id);
-x2_star(1) = X2(x2_id);
+x1_star(1) = X1(r);
+x2_star(1) = X2(c);
 
 % Trace to the end horizon
 fprintf('Froward tracing, please wait...\n')
 
+id = sub2ind([nX1 nX2], r, c);
 for k = 1 : n_horizon-1
     u1_star(k)  = U1_star_matrix(id, k);
     u2_star(k)  = U2_star_matrix(id, k);    
-    [x1_star(k+1), x2_star(k+1)] = state_update_fn(x1_star(k), ...
-                                   x2_star(k), u1_star(k), u2_star(k));
     
     id = descendant_matrix(id,k);
+    [x1_id,x2_id] = ind2sub([nX1 nX2], id);   
+    
+    x1_star(k+1) = X1(x1_id);
+    x2_star(k+1) = X2(x2_id); 
 end
 
 fprintf('Complete!\n');

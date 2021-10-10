@@ -68,9 +68,6 @@ j = repmat((1:nU) , nX, 1);
 x1_next_post_boundary = min(max(x1_next, lb(1)), ub(1));
 x2_next_post_boundary = min(max(x2_next, lb(2)), ub(2));
 
-is_infeasible = (x1_next~=x1_next_post_boundary) + ...
-    (x2_next~=x2_next_post_boundary);
-
 rx = snap(x1_next_post_boundary, repmat(lb(1),nX,nU), repmat(ub(1),nX,nU), ...
     repmat(nX1,nX,nU));
 cx = snap(x2_next_post_boundary, repmat(lb(2),nX,nU), repmat(ub(2),nX,nU), ...
@@ -90,7 +87,7 @@ for k = n_horizon-1 : -1 : 1
     ll = fprintf('%i',k);
     
     J_ = stage_cost_fn(X1(rx), X2(cx), U1(ru), U2(cu), k) + ...
-        reshape(J(ind,k+1),nX,nU) + is_infeasible .* 1e6;
+        reshape(J(ind,k+1),nX,nU);
     
     [J_min, J_min_idx] = min(J_, [], 2);
     
@@ -116,6 +113,5 @@ dps.X1        = X1;
 dps.X2        = X2;
 dps.U1        = U1;
 dps.U2        = U2;
-dps.state_update_fn     = state_update_fn;
 
 end

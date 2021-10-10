@@ -41,7 +41,7 @@ plot_3X_1U(dps, '--d');
 
 % Additional plotting
 figure
-plot(dps.x1_star, dps.x2_star, '-o');
+plot(dps.x1_star, dps.x2_star, '-o', 'LineWidth', 2);
 xlabel('x')
 ylabel('y')
 axis equal

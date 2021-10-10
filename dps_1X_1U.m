@@ -48,8 +48,6 @@ x_next = state_update_fn(X(i), repmat(U',nX,1));
 % Bound the states within the minimum and maximum values
 x_next_post_boundary = min(max(x_next, lb), ub);
 
-is_infeasible = (x_next~=x_next_post_boundary);
-
 ind = snap(x_next_post_boundary, ...
     repmat(lb,nX,nU), repmat(ub,nX,nU), repmat(nX,nX,nU));
 
@@ -65,7 +63,7 @@ for k = n_horizon-1 : -1 : 1
     ll = fprintf('%i',k);
     
     J_ = stage_cost_fn(X(i), repmat(U',nX,1), k) ...
-        + reshape(J(ind,k+1),nX,nU) + is_infeasible .* 1e6;
+        + reshape(J(ind,k+1),nX,nU);
     
     [J_min, J_min_idx] = min(J_, [], 2); % Row-wise
     
@@ -86,6 +84,5 @@ dps.U_star_matrix = U_star_matrix;
 dps.n_horizon           = n_horizon;
 dps.X                   = X;
 dps.U                   = U;
-dps.state_update_fn     = state_update_fn;
 
 end

@@ -1,4 +1,4 @@
-function reachability_plot_1X_1U(dps, terminal_tol)
+function reachability_plot_1X(dps, terminal_tol)
 figure;
 hold on;
 
@@ -43,7 +43,8 @@ X_buffer = unique(X_buffer,'rows');
 
 fprintf('\nComplete!\n')
 
-scatter(X_buffer(:,1), X_buffer(:,2), 'Marker', '.');
+scatter(X_buffer(:,1), X_buffer(:,2), 'Marker', '.', ...
+    'MarkerEdgeColor', 'green', 'MarkerFaceColor', 'green');
 
 xlim([1 dps.n_horizon+1])
 xlabel(['Stage-' '$k$'], 'Interpreter','latex')
