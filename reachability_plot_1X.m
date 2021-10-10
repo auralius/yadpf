@@ -1,4 +1,15 @@
-function reachability_plot_1X(dps, terminal_tol)
+% Draw reachability plot for a system with one state variable
+%
+% function reachability_plot_1X(dps, ...
+%                               terminal_tol)
+%
+% Arguments:
+%
+%     dps          = data structure from the dynamic programming solver
+%     terminal_tol = terminal node tollerance (integer value)
+%
+function reachability_plot_1X(dps, ...
+                              terminal_tol)
 figure;
 hold on;
 

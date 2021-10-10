@@ -10,7 +10,7 @@ X                 = dps.X;
 U_star_matrix     = dps.U_star_matrix;
 descendant_matrix = dps.descendant_matrix;
 
-id = snap(x_ic, min(X), max(X), nX-1);
+id = snap(x_ic, min(X), max(X), nX);
 x_star(1) = X(id);
 
 % Trace to the end horizon

@@ -17,9 +17,9 @@ U_star_matrix     = dps.U_star_matrix;
 descendant_matrix = dps.descendant_matrix;
 
 % Initial stage is given by the IC
-r = snap(x1_ic, min(X1), max(X1), nX1-1);
-c = snap(x2_ic, min(X2), max(X2), nX2-1);
-p = snap(x3_ic, min(X3), max(X3), nX3-1);
+r = snap(x1_ic, min(X1), max(X1), nX1);
+c = snap(x2_ic, min(X2), max(X2), nX2);
+p = snap(x3_ic, min(X3), max(X3), nX3);
 x1_star(1) = X1(r);
 x2_star(2) = X2(c);
 x3_star(3) = X3(p);
