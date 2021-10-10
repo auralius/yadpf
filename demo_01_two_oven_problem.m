@@ -28,6 +28,9 @@ dps = trace_1X_1U(dps, x0);
 % Plot the results
 plot_1X_1U(dps, '-d');
 
+% Reachability plot here
+reachability_plot_1X(dps,10);
+
 %%
 function x_next = state_update_fn(x, u)
 a = 0.7;

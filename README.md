@@ -12,7 +12,9 @@ Please check [here](https://www.mathcha.io/editor/X9JLdiqLS21T1NJNX4h6BGODQSxG7z
 
 ## Two-oven problem
 
-![](https://github.com/auralius/yadpf/blob/main/docs/two_oven_problem.png)
+![](https://github.com/auralius/yadpf/blob/main/docs/two_oven_problem_1.png)
+
+![](https://github.com/auralius/yadpf/blob/main/docs/two_oven_problem_2.png)
 
 ## Moving mass (double integrator)
 
@@ -20,7 +22,9 @@ Please check [here](https://www.mathcha.io/editor/X9JLdiqLS21T1NJNX4h6BGODQSxG7z
 
 ## Optimal storage strategy (single integrator)
 
-![](https://github.com/auralius/yadpf/blob/main/docs/optimal_storage_strategy.png)
+![](https://github.com/auralius/yadpf/blob/main/docs/optimal_storage_strategy_1.png)
+
+![](https://github.com/auralius/yadpf/blob/main/docs/optimal_storage_strategy_2.png)
 
 ## Lotka-Volterra fishery
 

@@ -9,8 +9,8 @@ X                 = dps.X;
 descendant_matrix = dps.descendant_matrix;
 J                 = dps.J;
 
-x_star = zeros(n_horizon, 2);
-X_buffer = [];
+x_star = zeros(1, n_horizon);
+buffer = zeros(nX,n_horizon);
 
 [~,id_target]  = min(J(:,n_horizon));
 
@@ -26,25 +26,29 @@ for j = 1:nX
     id = j;
     
     for k = 1 : n_horizon-1
-        x_star(k,:) = [k X(id)];
+        x_star(k) = X(id);
         id = descendant_matrix(id,k);
     end
     
     % The last stage
-    x_star(n_horizon,:) = [n_horizon X(id)];
+    x_star(n_horizon) = X(id);
     
     % Check the terminal stage, does it end at the desired terminal node?
     if abs(id - id_target) < terminal_tol
-        X_buffer = [X_buffer; x_star];  % If yes, keep them
+        buffer(j,:) = x_star;     % If yes, keep them
     end
 end
 
-X_buffer = unique(X_buffer,'rows');
-
 fprintf('\nComplete!\n')
 
-scatter(X_buffer(:,1), X_buffer(:,2), 'Marker', '.', ...
-    'MarkerEdgeColor', 'green', 'MarkerFaceColor', 'green');
+buffer(~any(buffer,2),:) = [];  % Delete rows that are all zeros
+mins = min(buffer);
+maxs = max(buffer);
+k = 1:n_horizon;
+plot(k,mins);
+plot(k,maxs);
+patch([k fliplr(k)], [mins fliplr(maxs)], 'g')
+
 
 xlim([1 dps.n_horizon+1])
 xlabel(['Stage-' '$k$'], 'Interpreter','latex')
