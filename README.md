@@ -10,45 +10,53 @@ This is sitll an ongoing work. YADPF is planned to be used for the project in [t
 
 Please check [here](https://www.mathcha.io/editor/X9JLdiqLS21T1NJNX4h6BGODQSxG7zwUpZG7LM) for a more detailed document.
 
-## Two-oven problem
+## Ex.1 : Two-oven problem
 
 ![](https://github.com/auralius/yadpf/blob/main/docs/two_oven_problem_1.png)
 
 ![](https://github.com/auralius/yadpf/blob/main/docs/two_oven_problem_2.png)
 
-## Moving mass (double integrator)
+## Ex.2 : Moving mass (double integrator)
 
 ![](https://github.com/auralius/yadpf/blob/main/docs/moving_mass.png)
 
-## Optimal storage strategy (single integrator)
+## Ex.3 : Optimal storage strategy (single integrator)
 
 ![](https://github.com/auralius/yadpf/blob/main/docs/optimal_storage_strategy_1.png)
 
 ![](https://github.com/auralius/yadpf/blob/main/docs/optimal_storage_strategy_2.png)
 
-## Lotka-Volterra fishery
+## Ex.4 : Lotka-Volterra fishery
 
 ![](https://github.com/auralius/yadpf/blob/main/docs/fishery_1.png)
 
 ![](https://github.com/auralius/yadpf/blob/main/docs/fishery_2.png)
 
-## Dubin's car
+## Ex.5 : Dubin's car
 
 ![](https://github.com/auralius/yadpf/blob/main/docs/dubins_car_1.png)
 
 ![](https://github.com/auralius/yadpf/blob/main/docs/dubins_car_2.png)
 
-## Find shortest path on a terrain
+## Ex.6 : Find shortest path on a terrain
 
 ![](https://github.com/auralius/yadpf/blob/main/docs/terrain_shortest_path_1.png)
 
 ![](https://github.com/auralius/yadpf/blob/main/docs/terrain_shortest_path_2.png)
 
-## Sutton's mountain car problem
+## Ex.7 : Sutton's mountain car problem
 
 ![](https://github.com/auralius/yadpf/blob/main/docs/mountain_car.png)
 
 ![](https://github.com/auralius/yadpf/blob/main/docs/mountain_car.gif)
 
-## Two-tank problem
+## Ex.8 : Two-tank problem
+
 ![](https://github.com/auralius/yadpf/blob/main/docs/two_tank_problem.png)
+
+
+## Ex.9 : Piecewise hanging mass-spring system
+
+![](https://github.com/auralius/yadpf/blob/main/docs/piecewise_mass_spring_1.png)
+
+![](https://github.com/auralius/yadpf/blob/main/docs/piecewise_mass_spring_2.png)
