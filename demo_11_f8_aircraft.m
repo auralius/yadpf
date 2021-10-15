@@ -8,7 +8,10 @@
 % Time-Optimal Switching Control. Journal of Optimization Theory and 
 % Applications, 117(1), 69–92. https://doi.org/10.1023/A:1023600422807
 %
-
+% Banks, S. P., & Mhana, K. J. (1992). Optimal control and stabilization 
+% for nonlinear systems. IMA Journal of Mathematical Control and 
+% Information, 9(2), 179–196. https://doi.org/10.1093/imamci/9.2.179
+%
 clear
 close all
 clc
