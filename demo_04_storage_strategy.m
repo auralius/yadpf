@@ -13,47 +13,45 @@ clear
 close all
 clc
 
+global Ts;
+
 % Setup the states and the inputs
-X = ( 0 : 0.1 : 500)';
-U = ( 0 : 0.1 : 10 )';
+X = ( 0 : 0.1 : 500 )';
+U = ( 0 : 0.1 : 10  )';
 
 % Setup the horizon
-Tf = 30;   % 200 days
-Ts = 1;    % Every 1 day
-T_vect = 0:Ts:Tf;
+Ts = 1;           % Every 1 day, make sure to update Ts everywhere
+T_vect = 0:Ts:30; % Day-0 to day-30
 n_horizon = length(T_vect);
 
-% Initiate the solver
-dps = dps_1X_1U(X, U, n_horizon, @state_update_fn, @stage_cost_fn, @terminal_cost_fn);
+x0 = 0;           % IC
 
-% Extract meaningful results for a given initial condition
-x0 = 1;
+% Run the solver, trace forward, plot the results and the reachablility 
+dps = dps_1X_1U(X, U, n_horizon, @state_update_fn, @stage_cost_fn, ...
+                @terminal_cost_fn);
 dps = trace_1X_1U(dps, x0);
-
-% Do plotting here
 plot_1X_1U(dps, '-d');
-
-% Reachability plot here
 reachability_plot_1X(dps,10);
 
-%%
+%% ------------------------------------------------------------------------
 function [x_next] = state_update_fn(x, u)
-Ts = 1;
+global Ts;
 x_next = Ts.*u + x; 
 end
 
-%%
+%% ------------------------------------------------------------------------
 function J = stage_cost_fn(x, u, k)
-Ts = 1;  % Step size
+global Ts;
+
 r = 0.1; % production cost growth rate
 c = 10;  % storage cost per time unit
 J =  Ts*exp(r*k*Ts).*u + c*x*Ts;
 end
 
-%%
+%% ------------------------------------------------------------------------
 function J = terminal_cost_fn(x)
-r = 100;
+L = 100;
 xf = 200;
 
-J = r .* (xf-x).^2;
+J = L .* (xf-x).^2;
 end

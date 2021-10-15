@@ -6,7 +6,7 @@
 % Arguments:
 %
 %     dps          = data structure from the dynamic programming solver
-%     terminal_tol = terminal node tollerance (integer value)
+%     terminal_tol = terminal node tollerance
 %
 function reachability_plot_1X(dps, ...
                               terminal_tol)
@@ -23,7 +23,7 @@ J                 = dps.J;
 x_star = zeros(1, n_horizon);
 buffer = zeros(nX,n_horizon);
 
-[~,id_target]  = min(J(:,n_horizon));
+[J_min,id_target]  = min(J(:,n_horizon));
 
 % Test for all nodes at stage-1 (every possibe ICs)
 fprintf('Generating the reachability plot...\n')
@@ -45,7 +45,7 @@ for j = 1:nX
     x_star(n_horizon) = X(id);
     
     % Check the terminal stage, does it end at the desired terminal node?
-    if abs(id - id_target) < terminal_tol
+    if abs(X(id) - X(id_target)) < terminal_tol
         buffer(j,:) = x_star;     % If yes, keep them
     end
 end

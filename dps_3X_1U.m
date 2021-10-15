@@ -40,9 +40,9 @@ lb    = [min(X1) min(X2) min(X3)];
 ub    = [max(X1) max(X2) max(X3)];
 
 % Where to keep the results?
-J                 = ones(nX,  n_horizon).*inf; % Cost matrix
-U_star_matrix     = zeros(nX, n_horizon);      % Store the optimal inputs
-descendant_matrix = zeros(nX, n_horizon);      % Store the optimal next state
+J                 = ones(nX,  n_horizon, 'single').*inf; % Cost matrix
+U_star_matrix     = zeros(nX, n_horizon, 'single');      % Optimal inputs
+descendant_matrix = zeros(nX, n_horizon, 'uint32');      % Optimal next state
 
 fprintf('Horizons : %i stages\n',n_horizon);
 fprintf('State    : %i nodes\n', nX);
@@ -84,10 +84,9 @@ for k = n_horizon-1 : -1 : 1
     fprintf(repmat('\b',1,ll));
     ll = fprintf('%i',k);    
     
-    J_ = stage_cost_fn(X1(r), X2(c), X3(p), repmat(U',nX,1), k) + ...
-        reshape(J(ind,k+1),nX,nU);
-    
-    [J_min, J_min_idx] = min(J_, [], 2);
+    [J_min, J_min_idx] = min(stage_cost_fn(X1(r), X2(c), X3(p), ...
+        repmat(U',nX,1), k) + reshape(J(ind,k+1),nX,nU), ...
+        [], 2);
     
     descendant_matrix(:,k) = ind(sub2ind([nX nU],(1:nX)',J_min_idx));
     
