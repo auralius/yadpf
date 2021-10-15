@@ -74,3 +74,6 @@ This is sitll an ongoing work. Please check [here](https://www.mathcha.io/editor
 
 ![](https://github.com/auralius/yadpf/blob/main/docs/time_optimal_van_der_pol_2.png)
 
+## Ex.11 : Time-optimal stablizaton of an F8 aircraft
+
+![](https://github.com/auralius/yadpf/blob/main/docs/f8_aircraft.png)
