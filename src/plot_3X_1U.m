@@ -5,6 +5,7 @@ plot(dps.x1_star, line_style, 'LineWidth', 2)
 xlabel(['Stage-' '$k$'], 'Interpreter','latex')
 ylabel('$x_1(k)$', 'Interpreter','latex')
 xlim([1 dps.n_horizon])
+ylim([min(dps.x1_star) max(dps.x1_star)])
 
 ax = gca;
 ax.XTick = unique(round(ax.XTick) );
@@ -14,6 +15,7 @@ plot(dps.x2_star, line_style, 'LineWidth', 2)
 xlabel(['Stage-' '$k$'], 'Interpreter','latex')
 ylabel('$x_2(k)$', 'Interpreter','latex')
 xlim([1 dps.n_horizon])
+ylim([min(dps.x2_star) max(dps.x2_star)])
 
 ax = gca;
 ax.XTick = unique(round(ax.XTick) );
@@ -23,10 +25,10 @@ plot(dps.x3_star, line_style, 'LineWidth', 2)
 xlabel(['Stage-' '$k$'], 'Interpreter','latex')
 ylabel('$x_3(k)$', 'Interpreter','latex')
 xlim([1 dps.n_horizon])
+ylim([min(dps.x3_star) max(dps.x3_star)])
 
 ax = gca;
 ax.XTick = unique(round(ax.XTick) );
-
 
 subplot(4,1,4)
 plot(dps.u_star, line_style, 'LineWidth', 2)

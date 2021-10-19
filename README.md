@@ -74,6 +74,24 @@ This is sitll an ongoing work. Please check [here](https://www.mathcha.io/editor
 
 ![](https://github.com/auralius/yadpf/blob/main/docs/time_optimal_van_der_pol_2.png)
 
+
 ## Ex.11 : Time-optimal stablizaton of an F8 aircraft
 
 ![](https://github.com/auralius/yadpf/blob/main/docs/f8_aircraft.png)
+
+
+## Ex.12 : Single tank with two inputs
+
+![](https://github.com/auralius/yadpf/blob/main/docs/single_tank_with_two_inputs.png)
+
+
+## Ex.13 : Single mass with two inputs
+
+![](https://github.com/auralius/yadpf/blob/main/docs/two_input_mass.png)
+
+
+## Ex.14 : Dubin's car with variable speed
+
+![](https://github.com/auralius/yadpf/blob/main/docs/variable_speed_dubins_car_1.png)
+
+![](https://github.com/auralius/yadpf/blob/main/docs/variable_speed_dubins_car_2.png)

@@ -29,9 +29,8 @@ nX = length(X);
 lb = min(X);
 ub = max(X);
 
-J                 = ones(nX, n_horizon).*inf;  % Cost matrix
-U_star_matrix     = zeros(nX, n_horizon);      % Store the optimal inputs
-descendant_matrix = zeros(nX, n_horizon);      % Store the optimal next state
+U_star_matrix     = zeros(nX, n_horizon, 'uint32');      % Store the optimal inputs
+descendant_matrix = zeros(nX, n_horizon, 'uint32');      % Store the optimal next state
 
 fprintf('Horizons : %i stages\n',n_horizon);
 fprintf('State    : %i nodes\n', nX);
@@ -39,17 +38,17 @@ fprintf('Input    : %i nodes\n', nU);
 fprintf('Pre-calculation, please wait...\n')
 
 % The terminal cost is only a function of the state variables
-J(:, n_horizon) = terminal_cost_fn(X);
+J = terminal_cost_fn(X);
 
 % Precompute for all nodes and all inputs
-i = repmat((1:nX)', 1,nU);
-x_next = state_update_fn(X(i), repmat(U',nX,1));
+i = fastrepcolvec((1:nX)',nU);
+x_next = state_update_fn(X(i), fastreprowvec(U',nX));
 
 % Bound the states within the minimum and maximum values
-x_next_post_boundary = min(max(x_next, lb), ub);
+x_next = min(max(x_next, lb), ub);
 
-ind = snap(x_next_post_boundary, ...
-    repmat(lb,nX,nU), repmat(ub,nX,nU), repmat(nX,nX,nU));
+ind = snap(x_next, ...
+    fastsca2mat(lb,nX,nU), fastsca2mat(ub,nX,nU), fastsca2mat(nX,nX,nU));
 
 fprintf('Completed!\n');
 
@@ -59,30 +58,30 @@ fprintf('Stage-');
 ll = 0;
 
 for k = n_horizon-1 : -1 : 1
+    J_old = J;
     fprintf(repmat('\b',1,ll));
     ll = fprintf('%i',k);
+       
+    [J_min, J_min_idx] = min(stage_cost_fn(X(i), fastreprowvec(U',nX), k) ...
+                             + reshape(J_old(ind),nX,nU), [], 2); 
     
-    J_ = stage_cost_fn(X(i), repmat(U',nX,1), k) ...
-        + reshape(J(ind,k+1),nX,nU);
-    
-    [J_min, J_min_idx] = min(J_, [], 2); % Row-wise
-    
-    descendant_matrix(:,k) = ind(sub2ind([nX nU],(1:nX)', J_min_idx));
+    descendant_matrix(:,k) = ind(fastsub2ind2([nX nU],(1:nX)', J_min_idx));
         
-    U_star_matrix(:,k) = U(J_min_idx);
-    J(:,k) = J_min;
+    U_star_matrix(:,k) = J_min_idx;
+    J = J_min;
 end
 
 fprintf('\nCompleted!\n');
 
 % Store the results
-dps.J = J;
 dps.descendant_matrix = descendant_matrix;
 dps.U_star_matrix = U_star_matrix;
 
 % Additional information that might be still needed
-dps.n_horizon           = n_horizon;
-dps.X                   = X;
-dps.U                   = U;
+dps.n_horizon = n_horizon;
+dps.X         = X;
+dps.U         = U;
+dps.nX        = nX;
+dps.nU        = nU;
 
 end

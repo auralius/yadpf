@@ -14,7 +14,11 @@ clear
 close all
 clc
 
-global Ts;
+global Ts xf;
+
+% Initial and terminal state
+x0 = 250;
+xf = 750;
 
 % Setup the states and the inputs
 X = ( 0 : 0.1 : 1000)';
@@ -30,14 +34,13 @@ n_horizon = length(T_vect);
 dps = dps_1X_1U(X, U, n_horizon, @state_update_fn, @stage_cost_fn, @terminal_cost_fn);
 
 % Extract meaningful results for a given initial condition
-x0 = 250;
 dps = trace_1X_1U(dps, x0);
 
 % Do plotting here
 plot_1X_1U(dps, '-');
 
 % Reachability plot here
-reachability_plot_1X(dps,5);
+reachability_plot_1X(dps, xf, 5);
 %%
 function [x_next] = state_update_fn(x, u)
 global Ts;
@@ -53,7 +56,7 @@ end
 
 %%
 function J = terminal_cost_fn(x)
+global xf;
 r = 1000;
-xf = 750;
 J = r .* (xf-x).^2;
 end

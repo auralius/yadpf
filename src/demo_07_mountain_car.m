@@ -24,6 +24,7 @@ dps = trace_2X_1U(dps, -0.6, 0);
 % Do plotting here
 plot_2X_1U(dps, '-');
 
+% Animate the mountatin car
 visualize(dps);
 
 %%

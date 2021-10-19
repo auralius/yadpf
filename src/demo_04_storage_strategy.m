@@ -13,7 +13,7 @@ clear
 close all
 clc
 
-global Ts;
+global xf Ts;
 
 % Setup the states and the inputs
 X = ( 0 : 0.1 : 500 )';
@@ -24,14 +24,15 @@ Ts = 1;           % Every 1 day, make sure to update Ts everywhere
 T_vect = 0:Ts:30; % Day-0 to day-30
 n_horizon = length(T_vect);
 
-x0 = 0;           % IC
+x0 = 0;           % Initial state
+xf = 200;         % Terminal state
 
 % Run the solver, trace forward, plot the results and the reachablility 
 dps = dps_1X_1U(X, U, n_horizon, @state_update_fn, @stage_cost_fn, ...
                 @terminal_cost_fn);
 dps = trace_1X_1U(dps, x0);
 plot_1X_1U(dps, '-d');
-reachability_plot_1X(dps,10);
+reachability_plot_1X(dps, 200, 10);
 
 %% ------------------------------------------------------------------------
 function [x_next] = state_update_fn(x, u)
@@ -50,8 +51,7 @@ end
 
 %% ------------------------------------------------------------------------
 function J = terminal_cost_fn(x)
+global xf;
 L = 100;
-xf = 200;
-
 J = L .* (xf-x).^2;
 end

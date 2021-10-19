@@ -20,9 +20,9 @@ dps.x3_star(3) = dps.X3(p);
 % Trace to the end horizon
 fprintf('Froward tracing, please wait...\n')
 
-id = sub2ind([nX1 nX2 nX3], r, c, p);
+id = fastsub2ind3([nX1 nX2 nX3], r, c, p);
 for k = 1 : dps.n_horizon-1 
-    dps.u_star(k)  = dps.U_star_matrix(id, k);    
+    dps.u_star(k)  = dps.U(dps.U_star_matrix(id, k));    
     
     id = dps.descendant_matrix(id,k);
     [x1_id,x2_id,x3_id] = ind2sub([nX1 nX2 nX3], id);               

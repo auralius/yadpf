@@ -41,10 +41,9 @@ lb    = [min(X1) min(X2)];
 ub    = [max(X1) max(X2)];
 
 % Where to keep the results?
-J                 = ones(nX,  n_horizon).*inf; % Cost matrix
-U1_star_matrix    = zeros(nX, n_horizon);      % Store the optimal inputs
-U2_star_matrix    = zeros(nX, n_horizon);      % Store the optimal inputs
-descendant_matrix  = zeros(nX, n_horizon);      % Store the optimal next state
+U1_star_matrix    = zeros(nX, n_horizon, 'uint32'); % Optimal input 1
+U2_star_matrix    = zeros(nX, n_horizon, 'uint32'); % Optimal input 2
+descendant_matrix = zeros(nX, n_horizon, 'uint32'); % Optimal next-state
 
 fprintf('Horizons : %i stages\n',n_horizon);
 fprintf('State    : %i nodes\n', nX);
@@ -53,25 +52,26 @@ fprintf('Pre-calculation, please wait...\n')
 
 % The terminal cost is only a function of the state variables
 [rx, cx] = ind2sub([nX1 nX2], 1:nX);
-J(:, n_horizon) = terminal_cost_fn(X1(rx), X2(cx));
+J = terminal_cost_fn(X1(rx), X2(cx));
 
 % Precompute for all nodes and all inputs
-i = repmat((1:nX)', 1, nU);
-j = repmat((1:nU) , nX, 1);
+i = fastrepcolvec((1:nX)', nU);
 [rx, cx] = ind2sub([nX1 nX2], i);
-[ru, cu] = ind2sub([nU1 nU2], j);
+i = fastreprowvec(1:nU, nX);
+[ru, cu] = ind2sub([nU1 nU2], i);
+clear i;
 
 [x1_next, x2_next] = state_update_fn(X1(rx), X2(cx), ...
     U1(ru), U2(cu));
 
 % Bound the states within the minimum and maximum values
-x1_next_post_boundary = min(max(x1_next, lb(1)), ub(1));
-x2_next_post_boundary = min(max(x2_next, lb(2)), ub(2));
-
-rx = snap(x1_next_post_boundary, repmat(lb(1),nX,nU), repmat(ub(1),nX,nU), ...
-    repmat(nX1,nX,nU));
-cx = snap(x2_next_post_boundary, repmat(lb(2),nX,nU), repmat(ub(2),nX,nU), ...
-    repmat(nX2,nX,nU));
+x1_next = min(max(x1_next, lb(1)), ub(1));
+x2_next = min(max(x2_next, lb(2)), ub(2));
+rx = snap(x1_next, fastsca2mat(lb(1),nX,nU), fastsca2mat(ub(1),nX,nU), ...
+          fastsca2mat(nX1,nX,nU));
+cx = snap(x2_next, fastsca2mat(lb(2),nX,nU), fastsca2mat(ub(2),nX,nU), ...
+          fastsca2mat(nX2,nX,nU));
+clear x1_next x2_next;
 
 ind = sub2ind([nX1 nX2], rx, cx);
 
@@ -86,23 +86,23 @@ for k = n_horizon-1 : -1 : 1
     fprintf(repmat('\b',1,ll));
     ll = fprintf('%i',k);
     
-    J_ = stage_cost_fn(X1(rx), X2(cx), U1(ru), U2(cu), k) + ...
-        reshape(J(ind,k+1),nX,nU);
+    J_old = J;
+          
+    [J_min, J_min_idx] = min(stage_cost_fn(X1(rx), X2(cx), ...
+                                           U1(ru), U2(cu), k) + ...
+                             reshape(J_old(ind),nX,nU), [], 2);
     
-    [J_min, J_min_idx] = min(J_, [], 2);
-    
-    descendant_matrix(:,k) = ind(sub2ind([nX nU],(1:nX)',J_min_idx));
+    descendant_matrix(:,k) = ind(fastsub2ind2([nX nU],(1:nX)',J_min_idx));
     
     [a, b] = ind2sub([nU1 nU2], J_min_idx);
-    U1_star_matrix(:,k) = U1(a);
-    U2_star_matrix(:,k) = U2(b);
-    J(:,k) = J_min;    
+    U1_star_matrix(:,k) = a;
+    U2_star_matrix(:,k) = b;
+    J = J_min;    
 end
 
 fprintf('\nComplete!\n');
 
 % Store the results
-dps.J                 = J;
 dps.descendant_matrix = descendant_matrix;
 dps.U1_star_matrix    = U1_star_matrix;
 dps.U2_star_matrix    = U2_star_matrix;
