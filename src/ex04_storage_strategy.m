@@ -16,8 +16,8 @@ clc
 global xf Ts;
 
 % Setup the states and the inputs
-X = ( 0 : 0.1 : 500 )';
-U = ( 0 : 0.1 : 10  )';
+X = 0 : 0.1 : 500;
+U = 0 : 0.1 : 10;
 
 % Setup the horizon
 Ts = 1;           % Every 1 day, make sure to update Ts everywhere

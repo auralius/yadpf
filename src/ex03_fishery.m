@@ -21,8 +21,8 @@ x0 = 250;
 xf = 750;
 
 % Setup the states and the inputs
-X = ( 0 : 0.1 : 1000)';
-U = ( 0 : 1   : 10 )';
+X = 0 : 0.1 : 1000;
+U = 0 : 1   : 10;
 
 % Setup the horizon
 Tf = 200;   % 200 days

@@ -11,10 +11,10 @@ close all;
 clear all;
 
 % Setup the states and the inputs
-X   = (    0 : 0.05  : 5   )';
-Y   = (    0 : 0.05  : 5   )';
-Ux  = (    0 : 0.05  : 2   )';
-Uy  = (   -3 : 0.05  : 3   )';
+X   = 0  : 0.05  : 5;
+Y   = 0  : 0.05  : 5;
+Ux  = 0  : 0.05  : 2;
+Uy  = -3 : 0.05  : 3;
 
 % Number of horizons
 n_horizon = 7;

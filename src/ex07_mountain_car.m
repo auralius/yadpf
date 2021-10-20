@@ -7,9 +7,9 @@ close all
 clc
 
 % Setup the states and the inputs
-P = ( -1.2  : 0.001 : 0.5)';
-V = ( -0.07 : 0.001 : 0.07)';
-U = [-1 0 1]';
+P = -1.2  : 0.001 : 0.5;
+V = -0.07 : 0.001 : 0.07;
+U = [-1 0 1];
 
 % Setup the horizon
 n_horizon = 200;

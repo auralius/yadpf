@@ -19,10 +19,10 @@ load ('Terrain1.mat');
 terrain_size = size(T);
 
 % Setup the states and the inputs
-X  = ( 1 : 1 : length(T))';
-Y  = ( 1 : 1 : length(T))';
-Ux  = [-1 0 1]';
-Uy  = [-1 0 1]';
+X  = 1 : 1 : length(T);
+Y  = 1 : 1 : length(T);
+Ux  = [-1 0 1];
+Uy  = [-1 0 1];
 
 %  The horizon isn't yet known, let us just guess
 n_horizon = 150;

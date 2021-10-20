@@ -21,10 +21,10 @@ global Ts;
 
 % Setup the states and the inputs
 % In degrees, our state resolutions are about 0.6 deg
-X1 = ( -0.2 : 0.01 : 0.5)';
-X2 = ( -0.7 : 0.01 : 0.1)';
-X3 = ( -0.9 : 0.01 : 0.9)';
-U  = deg2rad(( -3: 0.5 : 3))';
+X1 = -0.2 : 0.01 : 0.5;
+X2 = -0.7 : 0.01 : 0.1;
+X3 = -0.9 : 0.01 : 0.9;
+U  = deg2rad(( -3: 0.5 : 3));
 
 % Setup the horizon
 Ts = 0.1;            % Temporal discretization step

@@ -56,7 +56,7 @@ J = terminal_cost_fn(X1(r), X2(c), X3(p));
 i = fastrepcolvec((1:nX)', nU);
 [r, c, p] = ind2sub([nX1 nX2 nX3], i);
 [x1_next, x2_next, x3_next] = state_update_fn(X1(r), X2(c), X3(p),...
-    fastreprowvec(U',nX));
+    fastreprowvec(U,nX));
 clear i;
 
 % Bound the states within the minimum and maximum values
@@ -86,7 +86,7 @@ for k = n_horizon-1 : -1 : 1
     
     J_old = J;
     [J_min, J_min_idx] = min(stage_cost_fn(X1(r), X2(c), X3(p), ...
-        fastreprowvec(U',nX), k) + reshape(J_old(ind),nX,nU), ...
+        fastreprowvec(U,nX), k) + reshape(J_old(ind),nX,nU), ...
         [], 2);
     
     descendant_matrix(:,k) = ind(fastsub2ind2([nX nU],(1:nX)',J_min_idx));

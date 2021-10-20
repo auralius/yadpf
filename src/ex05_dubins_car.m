@@ -18,10 +18,10 @@ global Ts;
 R = 1;
 
 % Setup the states and the inputs
-X     = ( 0    : 0.01 : 2)';
-Y     = ( -1   : 0.01 : 0)';
-THETA = ( -2*pi: 0.01 : 2*pi)';
-OMEGA = [-1/R 0 1/R]';
+X     = 0    : 0.01 : 2;
+Y     = -1   : 0.01 : 0;
+THETA = -2*pi: 0.01 : 2*pi;
+OMEGA = [-1/R 0 1/R];
 
 % Setup the horizon
 Ts = 0.1;            % Temporal discretization step

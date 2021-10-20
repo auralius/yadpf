@@ -42,7 +42,7 @@ J = terminal_cost_fn(X);
 
 % Precompute for all nodes and all inputs
 i = fastrepcolvec((1:nX)',nU);
-x_next = state_update_fn(X(i), fastreprowvec(U',nX));
+x_next = state_update_fn(X(i), fastreprowvec(U,nX));
 
 % Bound the states within the minimum and maximum values
 x_next = min(max(x_next, lb), ub);
@@ -62,7 +62,7 @@ for k = n_horizon-1 : -1 : 1
     fprintf(repmat('\b',1,ll));
     ll = fprintf('%i',k);
        
-    [J_min, J_min_idx] = min(stage_cost_fn(X(i), fastreprowvec(U',nX), k) ...
+    [J_min, J_min_idx] = min(stage_cost_fn(X(i), fastreprowvec(U,nX), k) ...
                              + reshape(J_old(ind),nX,nU), [], 2); 
     
     descendant_matrix(:,k) = ind(fastsub2ind2([nX nU],(1:nX)', J_min_idx));

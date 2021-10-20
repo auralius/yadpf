@@ -9,9 +9,9 @@ clc
 global dt;
 
 % Setup the states and the inputs
-X = ( 0 : 0.001 : 1)';
-V = ( 0 : 0.001 : 1)';
-F = (-5 : 0.1   : 5)';
+X = 0  : 0.001 : 1;
+V = 0  : 0.001 : 1;
+F = -5 : 0.1   : 5;
 
 % Setup the horizon
 Tf = 1;     % 1 second

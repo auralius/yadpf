@@ -12,8 +12,8 @@ close all
 clc
 
 % Setup the states and the inputs
-X = (0:1:1000)';
-U = (0:1:1000)';
+X = 0:1:1000;
+U = 0:1:1000;
 
 % Setup the horizon
 n_horizon = 3;

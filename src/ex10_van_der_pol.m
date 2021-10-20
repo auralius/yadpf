@@ -16,9 +16,9 @@ clc
 global Ts;
 
 % Setup the states and the inputs
-X1 = ( -3   : 0.01 : 2)';
-X2 = ( -4   : 0.01 : 2)';
-U  = [-1 0 1]';
+X1 = -3   : 0.01 : 2;
+X2 = -4   : 0.01 : 2;
+U  = [-1 0 1];
 
 % Setup the horizon
 Ts = 0.1;            % Temporal discretization step

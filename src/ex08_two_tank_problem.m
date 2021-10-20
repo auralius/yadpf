@@ -18,10 +18,10 @@ clc
 global Ts;
 
 % Setup the states and the inputs
-X1  = ( 0 : 0.001 : 1 )';
-X2  = ( 0 : 0.001 : 1 )';
-U1  = ( 0 : 0.1  : 1 )';
-U2  = ( 0 : 0.1  : 1 )';
+X1  = 0 : 0.001 : 1;
+X2  = 0 : 0.001 : 1;
+U1  = 0 : 0.1   : 1;
+U2  = 0 : 0.1   : 1;
 
 %  Set the horizon
 Ts = 0.1;

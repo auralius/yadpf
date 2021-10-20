@@ -14,10 +14,10 @@ clc
 global dt;
 
 % Setup the states and the inputs
-X1 = ( 0 : 0.02 : 1)';
-X2 = ( 0 : 0.02 : 1)';
-U1 = ( 0 : 0.02 : 5)';
-U2 = (-4 : 0.02 : 0)';
+X1 =  0 : 0.02 : 1;
+X2 =  0 : 0.02 : 1;
+U1 =  0 : 0.02 : 5;
+U2 = -4 : 0.02 : 0;
 
 % Setup the horizon
 Tf = 1;     % 1 second
