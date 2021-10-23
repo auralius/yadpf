@@ -36,10 +36,10 @@ dps = dps_3X_1U(X, Y, THETA, OMEGA, n_horizon, @state_update_fn, @stage_cost_fn,
 toc
 
 % Extract meaningful results
-dps = trace_3X_1U(dps, 0, 0, 0);
+dps = forward_trace(dps, [0 0 0]);
 
 % Do plotting here
-plot_3X_1U(dps, '--d');
+plot_results(dps, '--d');
 
 % Additional plotting
 figure

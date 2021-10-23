@@ -29,10 +29,10 @@ dps = dps_1X_2U(X,U1, U2, n_horizon, @state_update_fn, ...
 
 % Extract meaningful results for a given initial condition
 x_ic = 0;
-dps = trace_1X_2U(dps, x_ic);
+dps = forward_trace(dps, x_ic);
 
 % Do plotting here
-plot_1X_2U(dps, '-');
+plot_results(dps, '-');
 
 
 %%

@@ -34,7 +34,7 @@ dps = dps_2X_2U(X, Y, Ux, Uy, n_horizon, @state_update_fn, ...
 % Extract meaningful results for a given initial condition
 x_ic = 1;
 y_ic = 1;
-dps = trace_2X_2U(dps, x_ic, y_ic);
+dps = forward_trace(dps, [x_ic y_ic]);
 
 % Do plotting here
 plot_2X_2U(dps, '-');

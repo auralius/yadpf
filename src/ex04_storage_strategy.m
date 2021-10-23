@@ -30,8 +30,8 @@ xf = 200;         % Terminal state
 % Run the solver, trace forward, plot the results and the reachablility 
 dps = dps_1X_1U(X, U, n_horizon, @state_update_fn, @stage_cost_fn, ...
                 @terminal_cost_fn);
-dps = trace_1X_1U(dps, x0);
-plot_1X_1U(dps, '-d');
+dps = forward_trace(dps, x0);
+plot_results(dps, '-d');
 reachability_plot_1X(dps, 200, 10);
 
 %% ------------------------------------------------------------------------

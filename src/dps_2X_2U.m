@@ -114,4 +114,7 @@ dps.X2        = X2;
 dps.U1        = U1;
 dps.U2        = U2;
 
+dps.n_states  = 2;
+dps.n_inputs  = 2;
+
 end

@@ -84,4 +84,7 @@ dps.U         = U;
 dps.nX        = nX;
 dps.nU        = nU;
 
+dps.n_states  = 1;
+dps.n_inputs  = 1;
+
 end

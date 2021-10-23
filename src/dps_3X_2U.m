@@ -115,9 +115,13 @@ dps.U2_star_matrix    = U2_star_matrix;
 
 % Additional information that might be still needed
 dps.n_horizon = n_horizon;
-dps.X1                  = X1;
-dps.X2                  = X2;
-dps.X3                  = X3;
-dps.U1                  = U1;
-dps.U2                  = U2;
+dps.X1        = X1;
+dps.X2        = X2;
+dps.X3        = X3;
+dps.U1        = U1;
+dps.U2        = U2;
+
+dps.n_states  = 3;
+dps.n_inputs  = 2;
+
 end

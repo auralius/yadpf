@@ -24,10 +24,10 @@ dps = dps_2X_1U(X, V, F, n_horizon, @state_update_fn, @stage_cost_fn, ...
                 @terminal_cost_fn);
 
 % Extract meaningful results
-dps = trace_2X_1U(dps, 0, 0);
+dps = forward_trace(dps, [0 0]);
 
 % Do plotting here
-plot_2X_1U(dps, '-');
+plot_results(dps, '-');
 
 %%
 function [x1_next, x2_next] = state_update_fn(x1, x2, u)

@@ -23,10 +23,10 @@ dps = dps_1X_1U(X, U, n_horizon, @state_update_fn, @stage_cost_fn, @terminal_cos
 
 % Extract meaningful results
 x0 = 30;
-dps = trace_1X_1U(dps, x0);
+dps = forward_trace(dps, x0);
 
 % Plot the results
-plot_1X_1U(dps, '-d');
+plot_results(dps, '-d');
 
 % Reachability plot here
 reachability_plot_1X(dps, 300, 10);

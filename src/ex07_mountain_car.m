@@ -19,10 +19,10 @@ dps = dps_2X_1U(P, V, U, n_horizon, @state_update_fn, @stage_cost_fn, ...
                 @terminal_cost_fn);
 
 % Extract meaningful results
-dps = trace_2X_1U(dps, -0.6, 0);
+dps = forward_trace(dps, [-0.6 0]);
 
 % Do plotting here
-plot_2X_1U(dps, '-');
+plot_results(dps, '-');
 
 % Animate the mountatin car
 visualize(dps);

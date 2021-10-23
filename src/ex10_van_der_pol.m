@@ -31,10 +31,10 @@ dps = dps_2X_1U(X1, X2, U, n_horizon, @state_update_fn, @stage_cost_fn, ...
                 @terminal_cost_fn);
 
 % Extract meaningful results
-dps = trace_2X_1U(dps, 1.0, 1.0);
+dps = firward_trace(dps, [1.0 1.0]);
 
 % Do plotting here
-plot_2X_1U(dps, '-');
+plot_results(dps, '-');
 
 % Additional plotting
 figure

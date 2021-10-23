@@ -34,10 +34,10 @@ n_horizon = length(T_vect);
 dps = dps_1X_1U(X, U, n_horizon, @state_update_fn, @stage_cost_fn, @terminal_cost_fn);
 
 % Extract meaningful results for a given initial condition
-dps = trace_1X_1U(dps, x0);
+dps = forward_trace(dps, x0);
 
 % Do plotting here
-plot_1X_1U(dps, '-');
+plot_results(dps, '-');
 
 % Reachability plot here
 reachability_plot_1X(dps, xf, 5);
