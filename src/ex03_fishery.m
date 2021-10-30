@@ -26,35 +26,32 @@ U = 0 : 1   : 10;
 
 % Setup the horizon
 Tf = 200;   % 200 days
-Ts = 0.5;   % Every 1 day
+Ts = 0.5;   % Every 0.5 day
 T_vect = 0:Ts:Tf;
 n_horizon = length(T_vect);
 
-% Initiate the solver
-dps = dps_1X_1U(X, U, n_horizon, @state_update_fn, @stage_cost_fn, @terminal_cost_fn);
-
-% Extract meaningful results for a given initial condition
+% Initiate and run the solver, pdo forward tracing for the desirec IC.
+% plot the results
+dps = dps_1X_1U(X, U, n_horizon, @state_update_fn, @stage_cost_fn, ...
+                @terminal_cost_fn);
 dps = forward_trace(dps, x0);
-
-% Do plotting here
 plot_results(dps, '-');
-
-% Reachability plot here
 reachability_plot_1X(dps, xf, 5);
-%%
+
+%% ------------------------------------------------------------------------
 function [x_next] = state_update_fn(x, u)
 global Ts;
 f = Ts .* (0.02 .* (x-x.^2./ 1000) - u);
 x_next = f + x; 
 end
 
-%%
+%% ------------------------------------------------------------------------
 function J = stage_cost_fn(x, u,k)
 global Ts;
 J =  -Ts .* u;
 end
 
-%%
+%% ------------------------------------------------------------------------
 function J = terminal_cost_fn(x)
 global xf;
 r = 1000;

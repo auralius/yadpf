@@ -49,32 +49,35 @@ xlabel('x')
 ylabel('y')
 axis equal
 
-%%
+%% ------------------------------------------------------------------------
 function [x_next, y_next] = state_update_fn(x, y, ux, uy)
 x_next = x + ux;
 y_next = y + uy;
 end
 
-%%
+%% ------------------------------------------------------------------------
 function J = stage_cost_fn(x, y, ux, uy, k)
 global terrain_size;
 
 r = terrain_size(1);
 c = terrain_size(2);
 
+% First, check where the car's next position for a selected input
 [x_to, y_to] = state_update_fn(x, y, ux, uy);
-
 x_to = min(max(x_to,1),r);
 y_to = min(max(y_to,1),c);
 
+% Next, compute the height difference of the current position to the next
+% position
 dh = get_height_difference(x, y, x_to, y_to);
 
+% Finally, compute the cost
 w = 2;
 J = ux.^2 + uy.^2 + w.*max(dh,0);
 
 end
 
-%%
+%% ------------------------------------------------------------------------
 function J = terminal_cost_fn(x, y)
 % Weighting factors
 k1 = 100;
@@ -87,7 +90,7 @@ yf = 60;
 J = k1.*(x-xf).^2 + k2.*(y-yf).^2;
 end
 
-%%
+%% ------------------------------------------------------------------------
 function dh = get_height_difference(x_from, y_from, x_to, y_to)
 global T terrain_size;
 

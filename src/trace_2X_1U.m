@@ -20,7 +20,7 @@ x1_star(1) = X1(r);
 x2_star(1) = X2(c);
 
 % Trace to the end horizon
-fprintf('Froward tracing, please wait...\n')
+fprintf('Forward tracing, please wait...\n')
 
 id = fastsub2ind2([nX1 nX2], r, c);
 for k = 1 : n_horizon-1      

@@ -11,7 +11,7 @@ id = snap(x_ic, min(dps.X), max(dps.X), nX);
 dps.x_star(1) = dps.X(id);
 
 % Trace to the end horizon
-fprintf('Foward tracing, please wait...\n')
+fprintf('Forward tracing, please wait...\n')
 
 for k = 1 : dps.n_horizon-1
     dps.u1_star(k)  = dps.U1(dps.U1_star_matrix(id, k));

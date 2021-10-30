@@ -59,7 +59,7 @@ fprintf('Pre-calculation, please wait...\n')
 J = terminal_cost_fn(X1(r), X2(c), X3(p));
 
 % Precompute for all nodes and all inputs
-i = repmat((1:nX)', 1,nU);
+i = fastrepcolvec((1:nX)',nU);
 [r, c, p] = ind2sub([nX1 nX2 nX3], i);
 i = fastreprowvec(1:nU, nX);
 [ru, cu] = ind2sub([nU1 nU2], i);

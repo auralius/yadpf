@@ -16,7 +16,7 @@ dps.x1_star(1) = dps.X1(r);
 dps.x2_star(1) = dps.X2(c);
 
 % Trace to the end horizon
-fprintf('Froward tracing, please wait...\n')
+fprintf('Forward tracing, please wait...\n')
 
 id = fastsub2ind2([nX1 nX2], r, c);
 for k = 1 : dps.n_horizon-1

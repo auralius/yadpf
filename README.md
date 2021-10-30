@@ -37,9 +37,9 @@ This is sitll an ongoing work. Please check [here](https://www.mathcha.io/editor
 
 ## Ex.5 : Dubin's car
 
-![](https://github.com/auralius/yadpf/blob/main/docs/dubins_car_1.png)
+![](https://github.com/auralius/yadpf/blob/main/docs/dubins_car.png)
 
-![](https://github.com/auralius/yadpf/blob/main/docs/dubins_car_2.png)
+![](https://github.com/auralius/yadpf/blob/main/docs/dubins_car.gif)
 
 
 ## Ex.6 : Find shortest path on a terrain
@@ -90,8 +90,8 @@ This is sitll an ongoing work. Please check [here](https://www.mathcha.io/editor
 ![](https://github.com/auralius/yadpf/blob/main/docs/two_input_mass.png)
 
 
-## Ex.14 : Dubin's car with variable speed
+## Ex.14 : Two-wheeled differential drive robot
 
-![](https://github.com/auralius/yadpf/blob/main/docs/variable_speed_dubins_car_1.png)
+![](https://github.com/auralius/yadpf/blob/main/docs/wheeled_robot.png)
 
-![](https://github.com/auralius/yadpf/blob/main/docs/variable_speed_dubins_car_2.png)
+![](https://github.com/auralius/yadpf/blob/main/docs/wheeled_robot.gif)
