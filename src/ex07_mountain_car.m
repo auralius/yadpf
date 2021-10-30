@@ -81,7 +81,7 @@ for k = 1 : dps.n_horizon
         htext2.String = ['u = ', num2str(dps.u_star(k))];
     end
     
-    write2gif(hfig, k, 'mountain_car.gif');
+    write2gif(hfig, k, 'mountain_car.gif', 0.01);
     drawnow; 
 end
 end
