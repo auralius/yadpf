@@ -9,6 +9,10 @@
 % Dudek, G. & Jenkin, M. R. M. (2000), Computational principles of mobile 
 % robotics. , Cambridge University Press .
 %
+% =========================================================================
+% CAUTION:
+% This simulation requires at least 32 GB of RAM !
+% =========================================================================
 
 clear
 close all
@@ -21,9 +25,10 @@ L = 0.2; % Distace between the two wheels
 % Setup the states and the inputs
 X     =  0  : 0.01  : 1;
 Y     = -1  : 0.01  : 0;
-THETA = -pi/2 : 0.01  : 0;
-VL    = [-1 -0.5 0 0.5 1];  % Left-wheel speed
-VR    = [-1 -0.5 0 0.5 1];  % Right-wheel speed
+%THETA = -pi/2 : 0.001  : 0; % Use this if your system has 64 GB of RAM 
+THETA = -pi/2 : 0.01  : 0; 
+VL    = [-1 -0.5 0 0.5 1];   % Left-wheel speed
+VR    = [-1 -0.5 0 0.5 1];   % Right-wheel speed
 
 % Setup the horizon
 Ts = 0.1;            % Temporal discretization step

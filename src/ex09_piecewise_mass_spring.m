@@ -4,7 +4,9 @@
 % 2021
 %
 % Piecewise mass-spring system hanging from two anchor points
+% Model as a planar kinematic car
 % https://www.mathworks.com/help/optim/ug/problem-based-cone-programming-springs.html
+%
 
 clc;
 close all;
@@ -34,7 +36,7 @@ plot_results(dps, '-d');
 % Additional plotting
 figure
 hold on
-plot(dps.x1_star, dps.x2_star, '-*');
+plot(dps.x1_star, dps.x2_star, '-o', 'LineWidth', 2);
 xlabel('x')
 ylabel('y')
 

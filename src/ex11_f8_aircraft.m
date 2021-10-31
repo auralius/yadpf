@@ -24,7 +24,7 @@ global Ts;
 X1 = -0.2 : 0.01 : 0.5;
 X2 = -0.7 : 0.01 : 0.1;
 X3 = -0.9 : 0.01 : 0.9;
-U  = deg2rad(( -3: 0.5 : 3));
+U  = deg2rad((-3 : 1 : 3));
 
 % Setup the horizon
 Ts = 0.1;            % Temporal discretization step
@@ -67,6 +67,8 @@ J = Ts.*(q*(x1.^2) + q*(x2.^2) + q*(x3.^2) + r*u.^2);
 end
 
 %%
-function J = terminal_cost_fn(~, x2, ~)
-J = zeros(size(x2));
+function J = terminal_cost_fn(x1, x2, x3)
+global Ts;
+
+J = 1000*Ts.*((x1.^2) + (x2.^2) + (x3.^2) );
 end
