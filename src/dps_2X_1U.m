@@ -100,6 +100,11 @@ dps.X1        = X1;
 dps.X2        = X2;
 dps.U         = U;
 
+dps.nX1       = nX1;
+dps.nX2       = nX2;
+dps.nX        = nX;
+dps.nU        = nU;
+
 dps.n_states  = 2;
 dps.n_inputs  = 1;
 

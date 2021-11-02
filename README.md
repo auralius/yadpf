@@ -18,7 +18,11 @@ This is sitll an ongoing work. Please check [here](https://www.mathcha.io/editor
 
 ## Ex.2 : Moving mass (double integrator)
 
-![](https://github.com/auralius/yadpf/blob/main/docs/moving_mass.png)
+![](https://github.com/auralius/yadpf/blob/main/docs/moving_mass_1.png)
+
+![](https://github.com/auralius/yadpf/blob/main/docs/moving_mass_2.png)
+
+![](https://github.com/auralius/yadpf/blob/main/docs/moving_mass_3.png)
 
 
 ## Ex.3 : Optimal storage strategy (single integrator)
@@ -51,7 +55,9 @@ This is sitll an ongoing work. Please check [here](https://www.mathcha.io/editor
 
 ## Ex.7 : Sutton's mountain car problem
 
-![](https://github.com/auralius/yadpf/blob/main/docs/mountain_car.png)
+![](https://github.com/auralius/yadpf/blob/main/docs/mountain_car_1.png)
+
+![](https://github.com/auralius/yadpf/blob/main/docs/mountain_car_2.png)
 
 ![](https://github.com/auralius/yadpf/blob/main/docs/mountain_car.gif)
 

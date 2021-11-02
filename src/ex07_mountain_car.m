@@ -32,6 +32,9 @@ plot_results(dps, '-');
 % Animate the mountatin car
 visualize(dps);
 
+% Draw the reachability plot
+reachability_plot_2X(dps, [0.5 0], 0.02)
+
 %% -----------------------------------------------------------------------
 function [p_next, v_next] = state_update_fn(p, v, u)
 v_next = v + 0.001*u - 0.0025*cos(3*p);
