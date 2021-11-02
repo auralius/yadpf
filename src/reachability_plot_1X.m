@@ -57,7 +57,11 @@ patch([k fliplr(k)], [mins fliplr(maxs)], 'g')
 xlim([1 dps.n_horizon+1])
 xlabel(['Stage-' '$k$'], 'Interpreter','latex')
 ylabel('$x_1(k)$', 'Interpreter','latex')
+title('Backward Reachability Plot');
 
 ax = gca;
 ax.XTick = unique(round(ax.XTick) );
+
+get(gca,'fontname');  
+set(gca,'fontname','times')  % Set it to times
 end

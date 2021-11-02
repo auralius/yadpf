@@ -40,6 +40,10 @@ dps = forward_trace(dps, [x1_ic x2_ic]);
 % Do plotting here
 plot_results(dps, '-');
 
+% Reachability plot, this takes time and the plot will not be very
+% responsive!
+%reachability_plot_2X(dps, [0.5 0.5], 0.01); % Enable this line to plot the
+                                             % reachability plot
 
 %%
 function [x1_next, x2_next] = state_update_fn(x1, x2, u1, u2)

@@ -66,9 +66,8 @@ X = unique(X,'rows');
 clear a buffer_x1 buffer_x2;
 
 % Scatter plot the pointclouds
-scatter3(X(:,1), X(:,2), X(:,3), 5 ,X(:,3), 'filled');
-colormap(turbo);
-
+fscatter3(X(:,1), X(:,2), X(:,3), X(:,3), jet);
+  
 % Make it beautiful
 xlim([min(dps.X1) max(dps.X1)]);
 ylim([min(dps.X2) max(dps.X2)]);
@@ -76,6 +75,10 @@ ylim([min(dps.X2) max(dps.X2)]);
 zlabel(['Stage-' '$k$'], 'Interpreter','latex')
 xlabel('$x_1(k)$', 'Interpreter','latex')
 ylabel('$x_2(k)$', 'Interpreter','latex')
+title('Backward Reachability');
 
-view([-1 -1 1])
+view([-1 -1 1]);
+
+get(gca,'fontname');
+set(gca,'fontname','times');  % Set it to times   
 end
