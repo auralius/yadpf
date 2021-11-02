@@ -64,7 +64,9 @@ This is sitll an ongoing work. Please check [here](https://www.mathcha.io/editor
 
 ## Ex.8 : Two-tank problem
 
-![](https://github.com/auralius/yadpf/blob/main/docs/two_tank_problem.png)
+![](https://github.com/auralius/yadpf/blob/main/docs/two_tank_problem_1.png)
+
+![](https://github.com/auralius/yadpf/blob/main/docs/two_tank_problem_2.png)
 
 
 ## Ex.9 : Piecewise hanging mass-spring system
