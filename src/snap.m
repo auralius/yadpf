@@ -5,7 +5,7 @@
 
 function snapped_val = snap(val, min_val, max_val, N)
 
-snapped_val = ceil(((val - min_val) ./ (max_val - min_val)  .* (N-1))+1);
+snapped_val = floor(((val - min_val) ./ (max_val - min_val)  .* (N-1))+1);
 snapped_val = max(min(snapped_val, N), 1);
 
 end

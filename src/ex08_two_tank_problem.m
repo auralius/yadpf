@@ -15,22 +15,20 @@ clear
 close all
 clc
 
-global Ts;
-
 % Setup the states and the inputs
 X1  = 0 : 0.001 : 1;
 X2  = 0 : 0.001 : 1;
 U1  = 0 : 0.1   : 1;
-U2  = 0 : 0.1   : 1;
+U2  = 0 : 0.1   : 1 ;
 
 %  Set the horizon
-Ts = 0.1;
-t = 0:Ts:2;
+Tocp = 0.2;
+t    = 0 : Tocp : 2;
 n_horizon = length(t);
 
 % Initiate the solver
 dps = dps_2X_2U(X1, X2, U1, U2, n_horizon, @state_update_fn, ...
-                @stage_cost_fn, @terminal_cost_fn);
+                @stage_cost_fn, @terminal_cost_fn, Tocp, 0.01);
 
 % Extract meaningful results for a given initial condition
 x1_ic = 0;
@@ -42,21 +40,18 @@ plot_results(dps, '-');
 
 % Reachability plot, this takes time and the plot will not be very
 % responsive!
-%reachability_plot_2X(dps, [0.5 0.5], 0.01); % Enable this line to plot the
-                                             % reachability plot
+reachability_plot_2X(dps, [0.5 0.5], 0.01); % Enable this line to plot the
+                                            % reachability plot
 
 %%
-function [x1_next, x2_next] = state_update_fn(x1, x2, u1, u2)
-global Ts;
-
-x1_next = Ts*(-0.5.*x1 + u1.*u2)     + x1;
-x2_next = Ts*(-0.5.*x2 + u1.*(1-u2)) + x2;
+function [x1_next, x2_next] = state_update_fn(x1, x2, u1, u2, dt)
+x1_next = dt*(-0.5.*x1 + u1.*u2)     + x1;
+x2_next = dt*(-0.5.*x2 + u1.*(1-u2)) + x2;
 end
 
 %%
-function J = stage_cost_fn(x1, x2, u1, u2, k)
-global Ts;
-J = (u1 + 0.1 .* abs(u2-0.5)) .* Ts;
+function J = stage_cost_fn(x1, x2, u1, u2, k, dt)
+J = (u1 + 0.1 .* abs(u2-0.5)) .* dt;
 end
 
 %%

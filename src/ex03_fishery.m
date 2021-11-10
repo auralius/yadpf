@@ -14,7 +14,7 @@ clear
 close all
 clc
 
-global Ts xf;
+global xf;
 
 % Initial and terminal state
 x0 = 250;
@@ -25,30 +25,28 @@ X = 0 : 0.1 : 1000;
 U = 0 : 1   : 10;
 
 % Setup the horizon
-Tf = 200;   % 200 days
-Ts = 0.5;   % Every 0.5 day
-T_vect = 0:Ts:Tf;
+Tf = 200;     % 200 days
+T_ocp = 0.2;  % Every half day
+T_vect = 0 : T_ocp : Tf;
 n_horizon = length(T_vect);
 
 % Initiate and run the solver, pdo forward tracing for the desirec IC.
 % plot the results
 dps = dps_1X_1U(X, U, n_horizon, @state_update_fn, @stage_cost_fn, ...
-                @terminal_cost_fn);
+                @terminal_cost_fn, T_ocp);
 dps = forward_trace(dps, x0);
 plot_results(dps, '-');
 reachability_plot_1X(dps, xf, 5);
 
 %% ------------------------------------------------------------------------
-function [x_next] = state_update_fn(x, u)
-global Ts;
-f = Ts .* (0.02 .* (x-x.^2./ 1000) - u);
+function [x_next] = state_update_fn(x, u, dt)
+f = dt .* (0.02 .* (x-x.^2./ 1000) - u);
 x_next = f + x; 
 end
 
 %% ------------------------------------------------------------------------
-function J = stage_cost_fn(x, u,k)
-global Ts;
-J =  -Ts .* u;
+function J = stage_cost_fn(x, u, k, dt)
+J =  -dt .* u;
 end
 
 %% ------------------------------------------------------------------------

@@ -28,8 +28,9 @@ Uy  = [-1 0 1];
 n_horizon = 150;
 
 % Initiate the solver
+T_ocp = 1;
 dps = dps_2X_2U(X, Y, Ux, Uy, n_horizon, @state_update_fn, ...
-                @stage_cost_fn, @terminal_cost_fn);
+                @stage_cost_fn, @terminal_cost_fn, T_ocp);
 
 % Extract meaningful results for a given initial condition
 x_ic = 1;
@@ -50,13 +51,13 @@ ylabel('y')
 axis equal
 
 %% ------------------------------------------------------------------------
-function [x_next, y_next] = state_update_fn(x, y, ux, uy)
+function [x_next, y_next] = state_update_fn(x, y, ux, uy, ~)
 x_next = x + ux;
 y_next = y + uy;
 end
 
 %% ------------------------------------------------------------------------
-function J = stage_cost_fn(x, y, ux, uy, k)
+function J = stage_cost_fn(x, y, ux, uy, k, ~)
 global terrain_size;
 
 r = terrain_size(1);

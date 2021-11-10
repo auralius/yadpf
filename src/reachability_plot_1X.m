@@ -31,7 +31,7 @@ for j = 1:dps.nX
     
     for k = 1 : dps.n_horizon-1
         x_star(k) = dps.X(id);
-        id = dps.descendant_matrix(id,k);
+        id = dps.descendant_matrix(k,id);
     end
     
     % The last stage
@@ -47,6 +47,11 @@ fprintf('\nComplete!\n')
 
 % Plot only the maximums and the minimums, color the area in between.
 buffer(~any(buffer,2),:) = [];  % Delete rows that are all zeros
+
+if isempty(buffer)
+    error('No reachable states are foud, increase the tollerance...\n');
+end
+
 mins = min(buffer);
 maxs = max(buffer);
 k = 1 : dps.n_horizon;

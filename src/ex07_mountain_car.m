@@ -13,18 +13,18 @@ clc
 %% -----------------------------------------------------------------------
 % Setup the states and the inputs
 P = -1.2  : 0.001 : 0.5;
-V = -0.07 : 0.001 : 0.07;
+V = -0.07 : 0.0001 : 0.07;
 U = [-1 0 1];
 
 % Setup the horizon
-n_horizon = 200;
+n_horizon = 150;
 
 % Initiate the solver
 dps = dps_2X_1U(P, V, U, n_horizon, @state_update_fn, @stage_cost_fn, ...
                 @terminal_cost_fn);
 
 % Extract meaningful results
-dps = forward_trace(dps, [-0.6 0]);
+dps = forward_trace(dps, [-0.5 0]);
 
 % Do plotting here
 plot_results(dps, '-');
@@ -33,26 +33,43 @@ plot_results(dps, '-');
 visualize(dps);
 
 % Draw the reachability plot
-reachability_plot_2X(dps, [0.5 0], 0.02)
+reachability_plot_2X(dps, [0.5 0], 0.1)
 
 %% -----------------------------------------------------------------------
-function [p_next, v_next] = state_update_fn(p, v, u)
+function [p_next, v_next] = state_update_fn(p, v, u, dt)
 v_next = v + 0.001*u - 0.0025*cos(3*p);
-p_next = p + v;
-end
+p_next = p + v_next;
 
+% Hitting the right wall
+[r,c] = find(p(:,:) >= 0.5);
+v_next(r,c) = 0;
+
+% Hitting the left wall
+[r,c] = find(p(:,:) <= -1.2);
+v_next(r,c) = 0.001; %  inelastic wall, but with positive small number velocity, otherwise it stucks forever
+
+end
 %% -----------------------------------------------------------------------
-function J = stage_cost_fn(x1, x2, u, k)
+function J = stage_cost_fn(x1, x2, u, k, ~)
 xf = 0.5;
 vf = 0;
 
-J = u.^2 + (x1-xf).^2 + (x2-vf).^2;
+r1 = 1000;
+r2 = 1000;
+r3 = 5;
+
+J = r1*(xf-x1).^2 + r2*(x2-vf).^2 + r3*u.^2;
 end
 
 %% -----------------------------------------------------------------------
 function J = terminal_cost_fn(x1, x2)
-% Weighting factors
-J = zeros(size(x1));
+xf = 0.5;
+vf = 0;
+
+r1 = 1000;
+r2 = 1000;
+
+J =  r1*(xf-x1).^2 + r2*(x2-vf).^2;
 end
 
 %% -----------------------------------------------------------------------

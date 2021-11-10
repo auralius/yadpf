@@ -16,13 +16,13 @@ This is sitll an ongoing work. Please check [here](https://www.mathcha.io/editor
 ![](https://github.com/auralius/yadpf/blob/main/docs/two_oven_problem_2.png)
 
 
-## Ex.2 : Moving mass (double integrator)
+## Ex.2 : Mass-damper system (double integrator)
 
-![](https://github.com/auralius/yadpf/blob/main/docs/moving_mass_1.png)
+![](https://github.com/auralius/yadpf/blob/main/docs/mass_damper_1.png)
 
-![](https://github.com/auralius/yadpf/blob/main/docs/moving_mass_2.png)
+![](https://github.com/auralius/yadpf/blob/main/docs/mass_damper_2.png)
 
-![](https://github.com/auralius/yadpf/blob/main/docs/moving_mass_3.png)
+![](https://github.com/auralius/yadpf/blob/main/docs/mass_damper_3.png)
 
 
 ## Ex.3 : Optimal storage strategy (single integrator)
@@ -39,7 +39,7 @@ This is sitll an ongoing work. Please check [here](https://www.mathcha.io/editor
 ![](https://github.com/auralius/yadpf/blob/main/docs/fishery_2.png)
 
 
-## Ex.5 : Dubin's car
+## Ex.5 : Dubin's car, makinga full circle
 
 ![](https://github.com/auralius/yadpf/blob/main/docs/dubins_car.png)
 
@@ -103,3 +103,10 @@ This is sitll an ongoing work. Please check [here](https://www.mathcha.io/editor
 ![](https://github.com/auralius/yadpf/blob/main/docs/wheeled_robot.png)
 
 ![](https://github.com/auralius/yadpf/blob/main/docs/wheeled_robot.gif)
+
+
+## Ex.15 : Time-optimal mass-damper system
+
+![](https://github.com/auralius/yadpf/blob/main/docs/time_optimal_mass_damper.png)
+
+

@@ -7,7 +7,9 @@
 %                n_horizon, ...
 %                state_update_fn, ...
 %                stage_cost_fn, ...
-%                terminal_cost_fn)
+%                terminal_cost_fn, ..
+%                T_ocp, ...
+%                T_dyn)
 %
 % Arguments:
 %
@@ -18,6 +20,9 @@
 %     state_update_fn   = user defined system model
 %     stage_cost_fn     = user defined stage cost function
 %     terminal_cost_fn  = user defined terminal cost function
+%     T_ocp             = sampling time for the optimal control problem
+%     T_dyn             = sampling time for the system's dynamic simulation
+%
 %
 function dps = dps_1X_2U(X, ...
     U1, ...
@@ -25,7 +30,21 @@ function dps = dps_1X_2U(X, ...
     n_horizon, ...
     state_update_fn, ...
     stage_cost_fn, ...
-    terminal_cost_fn)
+    terminal_cost_fn, ...
+    T_ocp, ...
+    T_dyn)                         
+
+% Check the arguments
+if nargin < 8
+    T_ocp = 1;
+    T_dyn = T_ocp;
+elseif nargin < 9
+    T_dyn = T_ocp;
+end 
+
+if T_dyn > T_ocp
+    error('Time step for simulating the system must be less or equal than the time step for the OCP discretization!')
+end
 
 nU1 = length(U1);
 nU2 = length(U2);
@@ -34,33 +53,45 @@ nX  = length(X);
 lb  = min(X);
 ub  = max(X);
 
-U1_star_matrix    = zeros(nX, n_horizon, 'uint32'); % Optimal input 1
-U2_star_matrix    = zeros(nX, n_horizon, 'uint32'); % Optimal input 2
-descendant_matrix = zeros(nX, n_horizon, 'uint32'); % Optimal next-state
+U1_star_matrix    = zeros(n_horizon, nX, 'uint32'); % Optimal input 1
+U2_star_matrix    = zeros(n_horizon, nX, 'uint32'); % Optimal input 2
+descendant_matrix = zeros(n_horizon, nX, 'uint32'); % Optimal next-state
 
 fprintf('Horizons : %i stages\n',n_horizon);
 fprintf('State    : %i nodes\n', nX);
 fprintf('Input    : %i nodes\n', nU);
-fprintf('Pre-calculation, please wait...\n')
+fprintf('Calculating terminal cost...\n')
 
 % The terminal cost is only a function of the state variables
 J = terminal_cost_fn(X);
 
 % Precompute for all nodes and all inputs
-i = fastrepcolvec((1:nX)',nU);
-j = fastreprowvec(1:nU, nX);
+i = fastreprowvec(1:nX,nU);
+j = fastrepcolvec((1:nU)', nX);
 [ru, cu] = ind2sub([nU1 nU2], j);
 clear j;
 
-x_next = state_update_fn(X(i), U1(ru), U2(cu));
+% Simulate the system with sampling period of Tdyn
+fprintf('Simulating the system one step ahead...\n');
+fprintf('Progress: ')
+
+n_iter = T_ocp/T_dyn; % Default time step for the dynamic simulation is 0.01[s]
+x_next = X(i);
+
+ll = 0;
+for k = 1 : 1 : n_iter
+    fprintf(repmat('\b',1,ll));
+    ll = fprintf('%.1f %%',k/n_iter*100);
+    x_next = state_update_fn(X(i), U1(ru), U2(cu), T_dyn);
+end
 
 % Bound the states within the minimum and maximum values
 x_next = min(max(x_next, lb), ub);
 
-ind = snap(x_next, ...
-    fastsca2mat(lb,nX,nU), fastsca2mat(ub,nX,nU), fastsca2mat(nX,nX,nU));
+next_ind = snap(x_next, ...
+    fastsca2mat(lb,nU,nX), fastsca2mat(ub,nU,nX), fastsca2mat(nX,nU,nX));
 
-fprintf('Completed!\n');
+fprintf('\nCompleted!\n');
 
 % Stage-wise iteration
 fprintf('Running backward dynamic programming algorithm...\n');
@@ -73,14 +104,14 @@ for k = n_horizon-1 : -1 : 1
     
     J_old = J;
     
-    [J_min, J_min_idx] = min(stage_cost_fn(X(i), U1(ru), U2(cu), k) ...
-                             + reshape(J_old(ind),nX,nU), [], 2);
+    [J_min, J_min_idx] = min(stage_cost_fn(X(i), U1(ru), U2(cu), k, T_ocp) ...
+                             + reshape(J_old(next_ind),nU,nX), [], 1);
     
-    descendant_matrix(:,k) = ind(fastsub2ind2([nX nU],(1:nX)', J_min_idx));
+    descendant_matrix(k,:) = next_ind(fastsub2ind2([nU nX], J_min_idx, 1:nX))';
     
     [a, b] = ind2sub([nU1 nU2], J_min_idx);
-    U1_star_matrix(:,k) = a;
-    U2_star_matrix(:,k) = b;
+    U1_star_matrix(k,:) = a;
+    U2_star_matrix(k,:) = b;
        
     J = J_min;
 end
@@ -100,8 +131,16 @@ dps.U2        = U2;
 dps.nX        = nX;
 dps.nU        = nU;
 
+dps.lb        = lb;
+dps.ub        = ub;
+
 dps.n_states  = 1;
 dps.n_inputs  = 2;
+
+dps.T_ocp = T_ocp;
+dps.T_dyn = T_dyn;
+
+dps.state_update_fn = state_update_fn;
 
 
 end

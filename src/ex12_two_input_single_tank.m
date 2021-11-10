@@ -11,21 +11,19 @@ clear
 close all
 clc
 
-global Ts;
-
 % Setup the states and the inputs
 X  = 0 : 0.001 : 1;
 U1  = [0 1];
 U2  = [0 0.5];
 
 %  Set the horizon
-Ts = 0.1;
-t = 0:Ts:2;
+T_ocp = 0.1;
+t = 0 : T_ocp : 2;
 n_horizon = length(t);
 
 % Initiate the solver
 dps = dps_1X_2U(X,U1, U2, n_horizon, @state_update_fn, ...
-                @stage_cost_fn, @terminal_cost_fn);
+                @stage_cost_fn, @terminal_cost_fn, T_ocp);
 
 % Extract meaningful results for a given initial condition
 x_ic = 0;
@@ -36,17 +34,14 @@ plot_results(dps, '-');
 
 
 %%
-function [x_next] = state_update_fn(x, u1, u2)
-global Ts;
-
-x_next = Ts*(-0.5.*x + u1 + u2) + x;
+function [x_next] = state_update_fn(x, u1, u2, dt)
+x_next = dt*(-0.5.*x + u1 + u2) + x;
 end
 
 %%
-function J = stage_cost_fn(x, u1, u2, k)
-global Ts;
+function J = stage_cost_fn(x, u1, u2, k, dt)
 xf = 1;
-J = (u1.^2 + u2.^2)* Ts + 10*Ts*(x-xf).^2;
+J = (u1.^2 + u2.^2)*dt + 10*dt*(x-xf).^2;
 end
 
 %%

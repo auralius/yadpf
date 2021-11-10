@@ -13,8 +13,8 @@ close all;
 clear all;
 
 % Setup the states and the inputs
-X   = 0  : 0.05  : 5;
-Y   = 0  : 0.05  : 5;
+X   = 0  : 0.025 : 5;
+Y   = 0  : 0.025 : 5;
 Ux  = 0  : 0.05  : 2;
 Uy  = -3 : 0.05  : 3;
 
@@ -26,9 +26,8 @@ dps = dps_2X_2U(X, Y, Ux, Uy, n_horizon, @state_update_fn, ...
                 @stage_cost_fn, @terminal_cost_fn);
 
 % Extract meaningful results for a given initial condition
-x_ic = 0;
-y_ic = 5;
-dps = forward_trace(dps, [x_ic y_ic]);
+x0 = [0 5];
+dps = forward_trace(dps, x0);
 
 % Do plotting here
 plot_results(dps, '-d');
@@ -41,13 +40,13 @@ xlabel('x')
 ylabel('y')
 
 %%
-function [x_next, y_next] = state_update_fn(x, y, ux, uy)
+function [x_next, y_next] = state_update_fn(x, y, ux, uy, ~)
 x_next = x + ux;
 y_next = y + uy;
 end
 
 %%
-function J = stage_cost_fn(x, y, ux, uy, i)
+function J = stage_cost_fn(x, y, ux, uy, i, ~)
 K = 40*(1:6);
 L = [1 1/2 1 2 1 1/2];
 % The last mass is not important, since the terminal node is "fixed".

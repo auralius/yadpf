@@ -35,7 +35,7 @@ for j = 1:dps.nX
         [r,c] = ind2sub([dps.nX1 dps.nX2], id);
         x1_star(k) = dps.X1(r);
         x2_star(k) = dps.X2(c);
-        id = dps.descendant_matrix(id,k);
+        id = dps.descendant_matrix(k,id);
     end
     
     % The last stage
@@ -59,11 +59,15 @@ a = any(buffer_x1+buffer_x2, 2);
 buffer_x1(~a,:) = [];  
 buffer_x2(~a,:) = [];  
 
-% Cinvert to 3D pointclouds
+% Convert to 3D pointclouds
 k = repmat(1:dps.n_horizon, size(buffer_x1,1),1);
 X = [reshape(buffer_x1,[],1) reshape(buffer_x2,[],1) reshape(k,[],1)];
 X = unique(X,'rows');
 clear a buffer_x1 buffer_x2;
+
+if isempty(X)
+    error('No reachable states are foud, increase the tollerance...\n');
+end
 
 % Scatter plot the pointclouds
 fscatter3(X(:,1), X(:,2), X(:,3), X(:,3), jet);

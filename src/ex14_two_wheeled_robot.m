@@ -18,27 +18,27 @@ clear
 close all
 clc
 
-global Ts L;
+global L;
 
 L = 0.2; % Distace between the two wheels
 
 % Setup the states and the inputs
 X     =  0  : 0.01  : 1;
 Y     = -1  : 0.01  : 0;
-%THETA = -pi/2 : 0.001  : 0; % Use this if your system has 64 GB of RAM 
-THETA = -pi/2 : 0.01  : 0; 
+THETA = -pi/2 : 0.001  : 0; % Use this if your system has 64 GB of RAM 
+%THETA = -pi/2 : 0.01  : 0; 
 VL    = [-1 -0.5 0 0.5 1];   % Left-wheel speed
 VR    = [-1 -0.5 0 0.5 1];   % Right-wheel speed
 
 % Setup the horizon
-Ts = 0.1;            % Temporal discretization step
-Tf = 2;              % Completion time
-t = 0:Ts:Tf;
+T_ocp = 0.2;            % Temporal discretization step
+Tf = sqrt(2);              % Completion time
+t = 0 : T_ocp : Tf;
 n_horizon = length(t);
 
 % Initiate and run the solver
 dps = dps_3X_2U(X, Y, THETA, VL, VR, n_horizon, @state_update_fn, ...
-                @stage_cost_fn, @terminal_cost_fn);
+                @stage_cost_fn, @terminal_cost_fn, T_ocp, 0.01);
 
 % Extract meaningful results
 dps = forward_trace(dps, [0 0 0]);
@@ -51,31 +51,29 @@ visualize(dps)
 
 %% ========================================================================
 function [x_next, y_next, theta_next] = state_update_fn(x, y, theta, ...
-                                                       vl, vr)
-global Ts L;
+                                                       vl, vr, dt)
+global L;
 
 omega = (vr-vl)/L;
 v = (vr+vl)/2;
 
-x_next = Ts*v.*cos(theta)+x;
-y_next = Ts*v.*sin(theta)+y;
+x_next = dt*v.*cos(theta)+x;
+y_next = dt*v.*sin(theta)+y;
 
-theta_next = Ts*omega+theta;
+theta_next = dt*omega+theta;
 end
 
 %% ========================================================================
-function J = stage_cost_fn(x, y, theta, vl,vr,  k)
-global Ts;
-
-J = Ts*(vl.^2 + vr.^2 + ones(size(vl)));
+function J = stage_cost_fn(x, y, theta, vl,vr,  k, dt)
+% Weighting factors
+r = 10;
+J = r*dt*(vl.^2 + vr.^2 );
 end
 
 %% ========================================================================
 function J = terminal_cost_fn(x, y, theta)
-global Ts;
-
 % Weighting factors
-r = 1000;
+r = 100;
 
 % Final states
 xf = 1;
@@ -83,7 +81,7 @@ yf = -1;
 thetaf = -pi/2; 
 
 % Calculate the cost
-J = Ts*(r.*(x-xf).^2 + r.*(y-yf).^2 + r.*(theta-thetaf).^2);
+J = r*(x-xf).^2 + r*(y-yf).^2 + r*(theta-thetaf).^2;
 end
 
 %% ========================================================================
@@ -92,7 +90,7 @@ function visualize(dps)
 hfig = figure;
 hold on;
 
-plot(dps.x1_star, dps.x2_star, '-o', 'LineWidth', 2);
+plot(dps.x1_star, dps.x2_star, '-', 'LineWidth', 2);
 xlabel('x')
 ylabel('y')
 axis equal
@@ -105,7 +103,7 @@ hcar = plot(rx, ry, 'r', 'LineWidth',2);
 xlim([min(dps.x1_star)-2*d max(dps.x1_star)+2*d])
 ylim([min(dps.x2_star)-2*d max(dps.x2_star)+2*d])
 
-for k = 1:dps.n_horizon
+for k = 1:length(dps.x1_star)
     theta = dps.x3_star(k);
     px = [cos(theta) -sin(theta)] * [rx;ry];
     py = [sin(theta)  cos(theta)]* [rx;ry];
