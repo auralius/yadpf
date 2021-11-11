@@ -9,11 +9,13 @@ This is a generic implemetation of a dynamic programming algorithm.
 This is sitll an ongoing work. Please check [here](https://www.mathcha.io/editor/X9JLdiqLS21T1NJNX4h6BGODQSxG7zwUpZG7LM) for a more detailed document.
 
 
-## Ex.1 : Two-oven problem
+## Ex.1 : Sutton's mountain car problem
 
-![](https://github.com/auralius/yadpf/blob/main/docs/two_oven_problem_1.png)
+![](https://github.com/auralius/yadpf/blob/main/docs/mountain_car.gif)
 
-![](https://github.com/auralius/yadpf/blob/main/docs/two_oven_problem_2.png)
+![](https://github.com/auralius/yadpf/blob/main/docs/mountain_car_1.png)
+
+![](https://github.com/auralius/yadpf/blob/main/docs/mountain_car_2.png)
 
 
 ## Ex.2 : Mass-damper system (double integrator)
@@ -25,11 +27,9 @@ This is sitll an ongoing work. Please check [here](https://www.mathcha.io/editor
 ![](https://github.com/auralius/yadpf/blob/main/docs/mass_damper_3.png)
 
 
-## Ex.3 : Optimal storage strategy (single integrator)
+## Ex.3 : Time-optimal mass-damper system
 
-![](https://github.com/auralius/yadpf/blob/main/docs/optimal_storage_strategy_1.png)
-
-![](https://github.com/auralius/yadpf/blob/main/docs/optimal_storage_strategy_2.png)
+![](https://github.com/auralius/yadpf/blob/main/docs/time_optimal_mass_damper.png)
 
 
 ## Ex.4 : Lotka-Volterra fishery
@@ -39,7 +39,7 @@ This is sitll an ongoing work. Please check [here](https://www.mathcha.io/editor
 ![](https://github.com/auralius/yadpf/blob/main/docs/fishery_2.png)
 
 
-## Ex.5 : Dubin's car, makinga full circle
+## Ex.5 : Dubin's car, making a full circle
 
 ![](https://github.com/auralius/yadpf/blob/main/docs/dubins_car.png)
 
@@ -53,13 +53,11 @@ This is sitll an ongoing work. Please check [here](https://www.mathcha.io/editor
 ![](https://github.com/auralius/yadpf/blob/main/docs/terrain_shortest_path_2.png)
 
 
-## Ex.7 : Sutton's mountain car problem
+## Ex.7 : Two-oven problem
 
-![](https://github.com/auralius/yadpf/blob/main/docs/mountain_car_1.png)
+![](https://github.com/auralius/yadpf/blob/main/docs/two_oven_problem_1.png)
 
-![](https://github.com/auralius/yadpf/blob/main/docs/mountain_car_2.png)
-
-![](https://github.com/auralius/yadpf/blob/main/docs/mountain_car.gif)
+![](https://github.com/auralius/yadpf/blob/main/docs/two_oven_problem_2.png)
 
 
 ## Ex.8 : Two-tank problem
@@ -105,8 +103,8 @@ This is sitll an ongoing work. Please check [here](https://www.mathcha.io/editor
 ![](https://github.com/auralius/yadpf/blob/main/docs/wheeled_robot.gif)
 
 
-## Ex.15 : Time-optimal mass-damper system
+## Ex.15 : Optimal storage strategy (single integrator)
 
-![](https://github.com/auralius/yadpf/blob/main/docs/time_optimal_mass_damper.png)
+![](https://github.com/auralius/yadpf/blob/main/docs/optimal_storage_strategy_1.png)
 
-
+![](https://github.com/auralius/yadpf/blob/main/docs/optimal_storage_strategy_2.png)
