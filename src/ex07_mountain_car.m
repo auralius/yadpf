@@ -17,7 +17,7 @@ V = -0.07 : 0.0001 : 0.07;
 U = [-1 0 1];
 
 % Setup the horizon
-n_horizon = 150;
+n_horizon = 140;
 
 % Initiate the solver
 dps = dps_2X_1U(P, V, U, n_horizon, @state_update_fn, @stage_cost_fn, ...
@@ -36,13 +36,13 @@ visualize(dps);
 reachability_plot_2X(dps, [0.5 0], 0.1)
 
 %% -----------------------------------------------------------------------
-function [p_next, v_next] = state_update_fn(p, v, u, dt)
+function [p_next, v_next] = state_update_fn(p, v, u, ~)
 v_next = v + 0.001*u - 0.0025*cos(3*p);
 p_next = p + v_next;
 
 % Hitting the right wall
-[r,c] = find(p(:,:) >= 0.5);
-v_next(r,c) = 0;
+%[r,c] = find(p(:,:) >= 0.5);
+%v_next(r,c) = 0;
 
 % Hitting the left wall
 [r,c] = find(p(:,:) <= -1.2);
@@ -77,23 +77,31 @@ function visualize(dps)
 hfig = figure;
 hold on;
 
-% Draw y = sine(3p)to representate a mountain
+% Use Universitas Pertamina's logo for the car
+up_logo = dlmread('up_tree_logo.mat'); 
+
+% Draw y = 0.4*sin(3p)to represent a mountain
 p = -1.2:0.001:0.5;
 plot(p, 0.4*sin(3 * p), 'LineWidth', 2);    
 set(gca, 'YTickLabel', [ ]); 
+xlim([-1.2 0.7])
 axis equal
 
 htext1 = text(-0.7,0.5, '');
 htext2 = text(-0.7,0.4, '');
 
 % Animate the car
-car = plot(0,0, 'or', 'LineWidth', 4);
+car = plot(0,0, '.r');
 for k = 1 : dps.n_horizon
-    set(car, 'XData', dps.x1_star(k));
+    % Normal angle to orient the logo
+    theta = atan(3*0.4*cos(3 * dps.x1_star(k)));
+    set(car, 'XData', (cos(theta)*up_logo(:,1)-sin(theta)*up_logo(:,2))+...
+        dps.x1_star(k));
     
-    % Plug the XStar to the equation of the mountain
-    set(car, 'YData', 0.4*sin(3*dps.x1_star(k))); 
-    
+    % Plug the x1_star to the equation of the mountain    
+    set(car, 'YData', (sin(theta)*up_logo(:,1)+cos(theta)*up_logo(:,2))+...
+        0.4*sin(3 *dps.x1_star(k))); 
+        
     htext1.String = ['Stage-', num2str(k), ', x = ', ...
         num2str(dps.x1_star(k)),', v = ', num2str(dps.x2_star(k))] ;
     
