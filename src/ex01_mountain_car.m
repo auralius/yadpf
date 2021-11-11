@@ -92,7 +92,7 @@ htext2 = text(-0.7,0.4, '');
 
 % Animate the car
 car = plot(0,0, '.r');
-for k = 1 : dps.n_horizon
+for k = 1 : length(dps.x1_star)
     % Normal angle to orient the logo
     theta = atan(3*0.4*cos(3 * dps.x1_star(k)));
     set(car, 'XData', (cos(theta)*up_logo(:,1)-sin(theta)*up_logo(:,2))+...
