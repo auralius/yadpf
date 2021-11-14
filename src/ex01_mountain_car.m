@@ -5,12 +5,11 @@
 % Sutton, R. S., & Barto, A. G. (2018). Reinforcement Learning: An 
 % Introduction (2nd ed.). The MIT Press.
 %
-
+%%
 clear
 close all
 clc
 
-%% -----------------------------------------------------------------------
 % Setup the states and the inputs
 P = -1.2  : 0.001 : 0.5;
 V = -0.07 : 0.0001 : 0.07;
@@ -39,21 +38,17 @@ visualize(dpf);
 % Draw the reachability plot, this may take quite some time
 % yadpf_rplot(dpf, [0.5 0], 0.1); 
 
-%% -----------------------------------------------------------------------
+%% The state update function
 function X = state_update_fn(X, U, ~)
 X{2} = X{2} + 0.001*U{1} - 0.0025*cos(3*X{1});
 X{1} = X{1} + X{2};
 
-% Hitting the right wall
-%[r,c] = find(X{1}(:,:) >= 0.5);
-%X{2}(r,c) = 0;
-
 % Hitting the left wall
 [r,c] = find(X{1}(:,:) <= -1.2);
-X{2}(r,c) = 0.001; %  inelastic wall, but with positive small number velocity, otherwise it stucks forever
-
+X{2}(r,c) = 0.001; %  Inelastic wall
 end
-%% -----------------------------------------------------------------------
+
+%% The stage cost function 
 function J = stage_cost_fn(X, U, k, ~)
 xf = [0.5 0];  % Terminal state
 
@@ -64,7 +59,7 @@ r3 = 5;
 J = r1*(X{1}-xf(1)).^2 + r2*(X{2}-xf(2)).^2 + r3*U{1}.^2;
 end
 
-%% -----------------------------------------------------------------------
+%% The terminal cost function
 function J = terminal_cost_fn(X)
 xf = [0.5 0];  % Terminal state
 

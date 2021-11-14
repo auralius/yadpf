@@ -25,7 +25,7 @@ end
 for i = 1 : dpf.n_inputs
     subplot(total_plots, 1, active_plot)
     hold on;
-    plot(t, dpf.u_star{i}, line_style, 'LineWidth', 2)
+    stairs(t, dpf.u_star{i}, line_style, 'LineWidth', 2)
     line([0 t(end)], [min(dpf.inputs{i}) min(dpf.inputs{i})],'LineStyle','--', 'Color', 'red')
     line([0 t(end)], [max(dpf.inputs{i}) max(dpf.inputs{i})],'LineStyle','--', 'Color', 'red')
     xlabel('t', 'Interpreter','latex')

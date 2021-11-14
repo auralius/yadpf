@@ -27,37 +27,36 @@ Tf = 200;     % 200 days
 T_ocp = 0.2;  % Every half day
 t = 0 : T_ocp : Tf;
 
-dpf.states = {X};
-dpf.inputs = {U};
-dpf.T_ocp = T_ocp;
-dpf.T_dyn = 0.01;
-dpf.n_horizon = length(t);
-dpf.state_update_fn = @state_update_fn;
-dpf.stage_cost_fn = @stage_cost_fn;
+dpf.states           = {X};
+dpf.inputs           = {U};
+dpf.T_ocp            = T_ocp;
+dpf.T_dyn            = 0.01;
+dpf.n_horizon        = length(t);
+dpf.state_update_fn  = @state_update_fn;
+dpf.stage_cost_fn    = @stage_cost_fn;
 dpf.terminal_cost_fn = @terminal_cost_fn;
 
-% Initiate and run the solver, pdo forward tracing for the desirec IC.
-% plot the results
-% Initiate and run the solver, do forwar tracing and plot the results
+% Initiate and run the solver, do forward tracing and plot the results
 dpf = yadpf_solve(dpf);
 dpf = yadpf_trace(dpf, x0);
 yadpf_plot(dpf, '-');
-reachability_plot_1X(dpf, xf, 5);
 
-%% ------------------------------------------------------------------------
+% Draw the reachability plot
+yadpf_rplot(dpf, xf, 5);
+
+%% The state update function
 function X = state_update_fn(X, U, dt)
 X{1} = X{1} + dt * (0.02 * (X{1}-X{1}.^2./ 1000) - U{1});
 end
 
-%% ------------------------------------------------------------------------
+%% The stage cost function
 function J = stage_cost_fn(X, U, k, dt)
 J =  -dt .* U{1};
 end
 
-%% ------------------------------------------------------------------------
+%% The terminal cost function
 function J = terminal_cost_fn(X)
 xf = 750; % Terminal state
-
 r = 1000;
 J = r * (xf-X{1}).^2;
 end

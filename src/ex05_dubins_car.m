@@ -8,7 +8,7 @@
 % See Example 2, page 3
 % https://www.math.kth.se/optsyst/grundutbildning/kurser/SF2852/LecturenotesScanned.pdf
 %
-
+%%
 clear
 close all
 clc
@@ -36,6 +36,7 @@ n_horizon = length(t);
 x0 = [0 0 0];
 xf = [0 0 -2*pi];
 
+% Build the structure
 dpf.states = {X, Y, THETA};
 dpf.inputs = {OMEGA};
 dpf.T_ocp = T_ocp;
@@ -50,10 +51,10 @@ dpf = yadpf_solve(dpf);
 dpf = yadpf_trace(dpf, x0);
 yadpf_plot(dpf, '-');
 
-% Additional plotting
+% Animation
 visualize(dpf);
 
-%% ------------------------------------------------------------------------
+%% The state update function
 function X = state_update_fn(X, U, dt)
 global v;
 
@@ -63,12 +64,12 @@ X{2} = dt*v*sin(X{3})+X{2};
 X{3} = dt*v*U{1}+X{3};
 end
 
-%% ------------------------------------------------------------------------
+%% The stage cost function
 function J = stage_cost_fn(X, U, k, dt)
 J = dt * U{1}.^2;  % Minimize the input
 end
 
-%% ------------------------------------------------------------------------
+%% The terminal cost function
 function J = terminal_cost_fn(X)
 global xf;
 % Weighting factors
@@ -78,7 +79,7 @@ r = 1000;
 J = r*(X{1}-xf(1)).^2 + r*(X{2}-xf(2)).^2 + r*(X{3}-xf(3)).^2;
 end
 
-%% ------------------------------------------------------------------------
+%% Animate the car's motion in XY-space
 function visualize(dpf)
 hfig = figure;
 hold on;

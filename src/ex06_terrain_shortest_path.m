@@ -24,7 +24,7 @@ Y  = 1 : 1 : length(T);
 Ux  = [-1 0 1];
 Uy  = [-1 0 1];
 
-% Initiate the solver
+% Prepare the structure
 dpf.states           = {X, Y};
 dpf.inputs           = {Ux Uy};
 dpf.T_ocp            = 1;
@@ -50,13 +50,13 @@ xlabel('x')
 ylabel('y')
 axis equal
 
-%% ------------------------------------------------------------------------
+%% The state update function
 function X = state_update_fn(X, U, ~)
 X{1} = X{1} + U{1};
 X{2} = X{2} + U{2};
 end
 
-%% ------------------------------------------------------------------------
+%% The stage cost function
 function J = stage_cost_fn(X, U, k, ~)
 global terra_size;
 
@@ -78,7 +78,7 @@ J = U{1}.^2 + U{2}.^2 + w.*max(dh,0);
 
 end
 
-%% ------------------------------------------------------------------------
+%% The terminal cost function
 function J = terminal_cost_fn(X)
 % Weighting factors
 k1 = 100;
@@ -90,7 +90,8 @@ xf = [50 60];
 J = k1*(X{1}-xf(1)).^2 + k2.*(X{2}-xf(2)).^2;
 end
 
-%% ------------------------------------------------------------------------
+%% This function computes the height differece between two location 
+%  coordinates
 function dh = get_height_difference(x_from, y_from, x_to, y_to)
 global T terra_size;
 
@@ -102,4 +103,6 @@ from_id = sub2ind([r c], x_from, y_from);
 
 dh = T(to_id) - T(from_id);
 end
+
+
 
