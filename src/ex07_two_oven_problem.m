@@ -11,8 +11,6 @@ clear
 close all
 clc
 
-global xf;
-
 % Initial and terminal states
 x0 = 30;
 xf = 300;
@@ -21,39 +19,40 @@ xf = 300;
 X = 0 : 0.1 : 1000;
 U = 0 : 0.1 : 1000;
 
-% Setup the horizon
-n_horizon = 3;
+dpf.states = {X};
+dpf.inputs = {U};
+dpf.T_ocp = 1;
+dpf.T_dyn = 1;
+dpf.n_horizon = 3;
+dpf.state_update_fn = @state_update_fn;
+dpf.stage_cost_fn = @stage_cost_fn;
+dpf.terminal_cost_fn = @terminal_cost_fn;
 
-% Initiate and run the solver
-dps = dps_1X_1U(X, U, n_horizon, @state_update_fn, @stage_cost_fn, ...
-                @terminal_cost_fn, 1);
-
-% Do forward tracing for the given initial state
-dps = forward_trace(dps, x0);
-
-% Plot the results
-plot_results(dps, '-d');
+% Initiate and run the solver, do forwar tracing and plot the results
+dpf = yadpf_solve(dpf);
+dpf = yadpf_trace(dpf, 30);
+yadpf_plot(dpf, '-');
 
 % Reachability plot
-reachability_plot_1X(dps, xf, 10);
+yadpf_rplot(dpf, xf, 10);
 
 %%
-function x_next = state_update_fn(x, u, ~)
+function X = state_update_fn(X, U, ~)
 a = 0.7;
-x_next = (1 - a).*x + a * u;
+X{1} = (1 - a).*X{1} + a * U{1};
 end
 
 %%
-function J = stage_cost_fn(x, u, k, ~)
-J = u.^2;
+function J = stage_cost_fn(X, U, k, ~)
+J = U{1}.^2;
 end
 
 %%
-function J = terminal_cost_fn(x)
-global xf;
+function J = terminal_cost_fn(X)
+xf = 300; % Desired terminal state
 
 % Weighting factor
 r = 1000;
 
-J = r * (x-xf).^2;
+J = r * (X{1}-xf).^2;
 end

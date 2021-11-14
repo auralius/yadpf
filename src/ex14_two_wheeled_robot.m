@@ -18,10 +18,6 @@ clear
 close all
 clc
 
-global L;
-
-L = 0.2; % Distace between the two wheels
-
 % Setup the states and the inputs
 X     =  0  : 0.01  : 1;
 Y     = -1  : 0.01  : 0;
@@ -32,65 +28,60 @@ VR    = [-1 -0.5 0 0.5 1];   % Right-wheel speed
 
 % Setup the horizon
 T_ocp = 0.2;            % Temporal discretization step
-Tf = sqrt(2);              % Completion time
+Tf = sqrt(2);           % Completion time
 t = 0 : T_ocp : Tf;
 n_horizon = length(t);
 
 % Initiate and run the solver
-dps = dps_3X_2U(X, Y, THETA, VL, VR, n_horizon, @state_update_fn, ...
-                @stage_cost_fn, @terminal_cost_fn, T_ocp, 0.01);
+dpf.states = {X Y THETA};
+dpf.inputs = {VL VR};
+dpf.T_ocp = T_ocp;
+dpf.T_dyn = 0.01;
+dpf.n_horizon = length(t);
+dpf.state_update_fn = @state_update_fn;
+dpf.stage_cost_fn = @stage_cost_fn;
+dpf.terminal_cost_fn = @terminal_cost_fn;
 
-% Extract meaningful results
-dps = forward_trace(dps, [0 0 0]);
-
-% Do plotting here
-plot_results(dps, '-');
+% Initiate and run the solver, do forward tracing and plot the results
+dpf = yadpf_solve(dpf);
+dpf = yadpf_trace(dpf, [0 0 0]);
+yadpf_plot(dpf, '-');
 
 % Additional plotting
-visualize(dps)
+visualize(dpf)
 
 %% ========================================================================
-function [x_next, y_next, theta_next] = state_update_fn(x, y, theta, ...
-                                                       vl, vr, dt)
-global L;
+function X = state_update_fn(X, U, dt)
+L = 0.2;            % Distace between the two wheels
+omega = (U{2}-U{1})/L;
+v = (U{1}+U{2})/2;
 
-omega = (vr-vl)/L;
-v = (vr+vl)/2;
+X{1} = dt*v.*cos(X{3})+X{1};
+X{2} = dt*v.*sin(X{3})+X{2};
 
-x_next = dt*v.*cos(theta)+x;
-y_next = dt*v.*sin(theta)+y;
-
-theta_next = dt*omega+theta;
+X{3} = dt*omega+X{3};
 end
 
 %% ========================================================================
-function J = stage_cost_fn(x, y, theta, vl,vr,  k, dt)
-% Weighting factors
-r = 10;
-J = r*dt*(vl.^2 + vr.^2 );
+function J = stage_cost_fn(X, U,  k, dt)
+r = 10;             % Weighting factors
+J = r*dt*(U{1}.^2 + U{2}.^2 );
 end
 
 %% ========================================================================
-function J = terminal_cost_fn(x, y, theta)
-% Weighting factors
-r = 100;
+function J = terminal_cost_fn(X)
+r = 100;            % Weighting factors
+xf = [1 -1 -pi/2];  % Final states
 
-% Final states
-xf = 1;
-yf = -1;
-thetaf = -pi/2; 
-
-% Calculate the cost
-J = r*(x-xf).^2 + r*(y-yf).^2 + r*(theta-thetaf).^2;
+J = r*(X{1}-xf(1)).^2 + r*(X{2}-xf(2)).^2 + r*(X{3}-xf(3)).^2;
 end
 
 %% ========================================================================
-function visualize(dps)
-
+function visualize(dpf)
 hfig = figure;
 hold on;
 
-plot(dps.x1_star, dps.x2_star, '-', 'LineWidth', 2);
+plot(dpf.x_star{1}, dpf.x_star{2}, '-', 'LineWidth', 2);
 xlabel('x')
 ylabel('y')
 axis equal
@@ -100,15 +91,15 @@ d = 0.02;
 rx = [-2*d -2*d 2*d 2*d -2*d];
 ry = [-d d d -d -d];
 hcar = plot(rx, ry, 'r', 'LineWidth',2);
-xlim([min(dps.x1_star)-2*d max(dps.x1_star)+2*d])
-ylim([min(dps.x2_star)-2*d max(dps.x2_star)+2*d])
+xlim([min(dpf.x_star{1})-2*d max(dpf.x_star{1})+2*d])
+ylim([min(dpf.x_star{2})-2*d max(dpf.x_star{2})+2*d])
 
-for k = 1:length(dps.x1_star)
-    theta = dps.x3_star(k);
+for k = 1:length(dpf.x_star{1})
+    theta = dpf.x_star{3}(k);
     px = [cos(theta) -sin(theta)] * [rx;ry];
     py = [sin(theta)  cos(theta)]* [rx;ry];
-    set(hcar, 'XData', px + dps.x1_star(k));
-    set(hcar, 'YData', py + dps.x2_star(k));    
+    set(hcar, 'XData', px + dpf.x_star{1}(k));
+    set(hcar, 'YData', py + dpf.x_star{2}(k));    
     drawnow;
     write2gif(hfig, k, 'wheeled_robot.gif', 0.3);
 end

@@ -34,45 +34,53 @@ X3 = -1.2 : 0.01  : 0.7;   % Pitch rate : theta_dot
 U  = deg2rad([-3 0 3]);    % Tail deflection
 
 % Setup the horizon
-Topt = 0.2;  % Discretization time step, less than 0.3s requires finer grid
+T_ocp = 0.2;  % Discretization time step, less than 0.3s requires finer grid
 Tf = 10;     % From the paper, Tf < 7s, 10s should be fine
-t = 0 : Topt : Tf;
+t = 0 : T_ocp : Tf;
 n_horizon = length(t);
 
-% Initiate and run the solver
-% Dynamics simulation runs at 100 Hz, this can take a some time!
-dps = dps_3X_1U(X1, X2, X3, U, n_horizon, @state_update_fn, ...
-                @stage_cost_fn, @terminal_cost_fn, Topt, 0.01);
+% Initiate the solver
+dpf.states              = {X1 X2 X3};
+dpf.inputs              = {U};
+dpf.T_ocp               = T_ocp;
+dpf.T_dyn               = 0.01;
+dpf.n_horizon           = length(t);
+dpf.state_update_fn     = @state_update_fn;
+dpf.stage_cost_fn       = @stage_cost_fn;
+dpf.terminal_cost_fn    = @terminal_cost_fn;
 
-% Extract meaningful results for the given IC
-dps = forward_trace(dps, [deg2rad(26.7) 0 0]);
-
-% Do plotting here
-plot_results(dps, '-');
-
+% Initiate and run the solver, do forwar tracing and plot the results
+dpf = yadpf_solve(dpf);
+dpf = yadpf_trace(dpf, [deg2rad(26.7) 0 0]);
+yadpf_plot(dpf, '-');
 %%
-function [x1_next, x2_next, x3_next] = state_update_fn(x1, x2, x3, u, dt)
-x1_next = (-0.877*x1 + x3 - 0.088*(x1.*x3) + 0.47.*(x1.^2) - ...
-          0.019*(x2.^2) - (x1.^2).*x3 + 3.846*(x1.^3) - 0.215*u + ...
-          0.28*((x1.^2).*u) + 0.47*(x1.*(u.^2)) + 0.63*(u.^3))*dt + x1;
-x2_next = x3*dt + x2;
-x3_next = (-4.208*x1 - 0.396*x3 - 0.47*(x1.^2) - 3.564*(x1.^3) - ...
-          20.967*u + 6.265*((x1.^2).*u) + 46*(x1.*(u.^2)) + ...
-          61.4*u.^3)*dt + x3;
+function X = state_update_fn(X, U, dt)
+u  = U{1};
+x1 = X{1};
+x2 = X{2};
+x3 = X{3};
+
+X{1} = (-0.877*x1 + x3 - 0.088*(x1.*x3) + 0.47.*(x1.^2) - ...
+        0.019*(x2.^2) - (x1.^2).*x3 + 3.846*(x1.^3) - 0.215*u + ...
+        0.28*((x1.^2).*u) + 0.47*(x1.*(u.^2)) + 0.63*(u.^3))*dt + x1;
+X{2} = x3*dt + x2;
+X{3} = (-4.208*x1 - 0.396*x3 - 0.47*(x1.^2) - 3.564*(x1.^3) - ...
+        20.967*u + 6.265*((x1.^2).*u) + 46*(x1.*(u.^2)) + ...
+        61.4*u.^3)*dt + x3;
 end
 
 %%
-function J = stage_cost_fn(x1, x2, x3, u, ~, dt)
+function J = stage_cost_fn(X, U, ~, dt)
 % Tuning parameters q and r
 q1 = 100; % attack angle
 q2 = 100; % pitch
 q3 = 100; % pitch rate
 r  = 0;   % input can be zero, so we apply input minimizer, but not much
 
-J = dt.*(q1*(x1.^2) + q2*(x2.^2) + q3*(x3.^2) + r*u.^2);
+J = dt.*(q1*(X{1}.^2) + q2*(X{2}.^2) + q3*(X{3}.^2) + r*U{1}.^2);
 end
 
 %%
-function J = terminal_cost_fn(x1, x2, x3)
-J = 100*((x1.^2) + (x2.^2) + (x3.^2) );
+function J = terminal_cost_fn(X)
+J = 100*((X{1}.^2) + (X{2}.^2) + (X{3}.^2) );
 end

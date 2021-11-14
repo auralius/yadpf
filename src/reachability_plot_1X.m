@@ -5,40 +5,40 @@
 %
 % Arguments:
 %
-%     dps            = data structure from the dynamic programming solver
+%     dpf            = data structure from the dynamic programming function
 %     terminal_state = desired terminal state
 %     terminal_tol   = terminal node tollerance
 %
-function reachability_plot_1X(dps, ...
+function reachability_plot_1X(dpf, ...
                               terminal_state, ... 
                               terminal_tol)
 figure;
 hold on;
 
-x_star = zeros(1, dps.n_horizon);
-buffer = zeros(dps.nX, dps.n_horizon);
+x_star = zeros(1, dpf.n_horizon);
+buffer = zeros(dpf.nX, dpf.n_horizon);
 
 % Test for all nodes at stage-1 (every possibe ICs)
 fprintf('Generating the reachability plot...\n')
 fprintf('Progress: ')
 ll = 0;
 
-for j = 1:dps.nX
+for j = 1:dpf.nXX
     fprintf(repmat('\b',1,ll));
-    ll = fprintf('%.1f %%',j/dps.nX*100);
+    ll = fprintf('%.1f %%',j/dpf.nXX*100);
        
     id = j;
     
-    for k = 1 : dps.n_horizon-1
-        x_star(k) = dps.X(id);
-        id = dps.descendant_matrix(k,id);
+    for k = 1 : dpf.n_horizon-1
+        x_star(k) = dpf.states{1}(id);
+        id = dpf.descendant_matrix(k,id);
     end
     
     % The last stage
-    x_star(dps.n_horizon) = dps.X(id);
+    x_star(dpf.n_horizon) = dpf.states{1}(id);
     
     % Check the terminal stage, does it end at the desired terminal node?
-    if abs(dps.X(id) - terminal_state) < terminal_tol
+    if abs(dpf.states{1}(id) - terminal_state) < terminal_tol
         buffer(j,:) = x_star;     % If yes, keep them
     end
 end
@@ -54,12 +54,12 @@ end
 
 mins = min(buffer);
 maxs = max(buffer);
-k = 1 : dps.n_horizon;
+k = 1 : dpf.n_horizon;
 plot(k, mins);
 plot(k, maxs);
 patch([k fliplr(k)], [mins fliplr(maxs)], 'g')
 
-xlim([1 dps.n_horizon+1])
+xlim([1 dpf.n_horizon+1])
 xlabel(['Stage-' '$k$'], 'Interpreter','latex')
 ylabel('$x_1(k)$', 'Interpreter','latex')
 title('Backward Reachability Plot');

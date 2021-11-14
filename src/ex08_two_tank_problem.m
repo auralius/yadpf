@@ -22,48 +22,49 @@ U1  = 0 : 0.1   : 1;
 U2  = 0 : 0.1   : 1 ;
 
 %  Set the horizon
-Tocp = 0.2;
-t    = 0 : Tocp : 2;
+T_ocp = 0.2;
+t    = 0 : T_ocp : 2;
 n_horizon = length(t);
 
 % Initiate the solver
-dps = dps_2X_2U(X1, X2, U1, U2, n_horizon, @state_update_fn, ...
-                @stage_cost_fn, @terminal_cost_fn, Tocp, 0.01);
+dpf.states = {X1 X2};
+dpf.inputs = {U1 U2};
+dpf.T_ocp = T_ocp;
+dpf.T_dyn = 0.01;
+dpf.n_horizon = length(t);
+dpf.state_update_fn = @state_update_fn;
+dpf.stage_cost_fn = @stage_cost_fn;
+dpf.terminal_cost_fn = @terminal_cost_fn;
 
-% Extract meaningful results for a given initial condition
-x1_ic = 0;
-x2_ic = 0;
-dps = forward_trace(dps, [x1_ic x2_ic]);
-
-% Do plotting here
-plot_results(dps, '-');
+% Initiate and run the solver, do forwar tracing and plot the results
+dpf = yadpf_solve(dpf);
+dpf = yadpf_trace(dpf, [0 0]);
+yadpf_plot(dpf, '-');
 
 % Reachability plot, this takes time and the plot will not be very
 % responsive!
-reachability_plot_2X(dps, [0.5 0.5], 0.01); % Enable this line to plot the
-                                            % reachability plot
+yadpf_rplot(dps, [0.5 0.5], 0.01); 
 
 %%
-function [x1_next, x2_next] = state_update_fn(x1, x2, u1, u2, dt)
-x1_next = dt*(-0.5.*x1 + u1.*u2)     + x1;
-x2_next = dt*(-0.5.*x2 + u1.*(1-u2)) + x2;
+function X = state_update_fn(X, U, dt)
+X{1} = dt*(-0.5*X{1} + U{1}.*U{2})       + X{1};
+X{2} = dt*(-0.5*X{2} + U{1}.*(1-U{2})) + X{2};
 end
 
 %%
-function J = stage_cost_fn(x1, x2, u1, u2, k, dt)
-J = (u1 + 0.1 .* abs(u2-0.5)) .* dt;
+function J = stage_cost_fn(X, U, k, dt)
+J = (U{1} + 0.1 .* abs(U{2}-0.5)) .* dt;
 end
 
 %%
-function J = terminal_cost_fn(x1, x2)
+function J = terminal_cost_fn(X)
 % Final states
-x1f = 0.5;
-x2f = 0.5;
-e1 = x1-x1f;
-e2 = x2-x2f;
+xf = [0.5 0.5];
+e1 = X{1}-xf(1);
+e2 = X{2}-xf(2);
 
-J1 = zeros(size(x1));
-J2 = zeros(size(x2));
+J1 = zeros(size(X{1}));
+J2 = zeros(size(X{2}));
 
 J1(e1<0) = 1000;
 J2(e2<0) = 1000;

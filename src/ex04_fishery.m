@@ -14,8 +14,6 @@ clear
 close all
 clc
 
-global xf;
-
 % Initial and terminal state
 x0 = 250;
 xf = 750;
@@ -27,31 +25,39 @@ U = 0 : 1   : 10;
 % Setup the horizon
 Tf = 200;     % 200 days
 T_ocp = 0.2;  % Every half day
-T_vect = 0 : T_ocp : Tf;
-n_horizon = length(T_vect);
+t = 0 : T_ocp : Tf;
+
+dpf.states = {X};
+dpf.inputs = {U};
+dpf.T_ocp = T_ocp;
+dpf.T_dyn = 0.01;
+dpf.n_horizon = length(t);
+dpf.state_update_fn = @state_update_fn;
+dpf.stage_cost_fn = @stage_cost_fn;
+dpf.terminal_cost_fn = @terminal_cost_fn;
 
 % Initiate and run the solver, pdo forward tracing for the desirec IC.
 % plot the results
-dps = dps_1X_1U(X, U, n_horizon, @state_update_fn, @stage_cost_fn, ...
-                @terminal_cost_fn, T_ocp);
-dps = forward_trace(dps, x0);
-plot_results(dps, '-');
-reachability_plot_1X(dps, xf, 5);
+% Initiate and run the solver, do forwar tracing and plot the results
+dpf = yadpf_solve(dpf);
+dpf = yadpf_trace(dpf, x0);
+yadpf_plot(dpf, '-');
+reachability_plot_1X(dpf, xf, 5);
 
 %% ------------------------------------------------------------------------
-function [x_next] = state_update_fn(x, u, dt)
-f = dt .* (0.02 .* (x-x.^2./ 1000) - u);
-x_next = f + x; 
+function X = state_update_fn(X, U, dt)
+X{1} = X{1} + dt * (0.02 * (X{1}-X{1}.^2./ 1000) - U{1});
 end
 
 %% ------------------------------------------------------------------------
-function J = stage_cost_fn(x, u, k, dt)
-J =  -dt .* u;
+function J = stage_cost_fn(X, U, k, dt)
+J =  -dt .* U{1};
 end
 
 %% ------------------------------------------------------------------------
-function J = terminal_cost_fn(x)
-global xf;
+function J = terminal_cost_fn(X)
+xf = 750; % Terminal state
+
 r = 1000;
-J = r .* (xf-x).^2;
+J = r * (xf-X{1}).^2;
 end

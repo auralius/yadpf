@@ -18,56 +18,56 @@ Y   = 0  : 0.025 : 5;
 Ux  = 0  : 0.05  : 2;
 Uy  = -3 : 0.05  : 3;
 
-% Number of horizons
-n_horizon = 7;
-
 % Initiate the solver
-dps = dps_2X_2U(X, Y, Ux, Uy, n_horizon, @state_update_fn, ...
-                @stage_cost_fn, @terminal_cost_fn);
+dpf.states = {X, Y};
+dpf.inputs = {Ux Uy};
+dpf.T_ocp = 1;
+dpf.T_dyn = 1;
+dpf.n_horizon = 7;
+dpf.state_update_fn = @state_update_fn;
+dpf.stage_cost_fn = @stage_cost_fn;
+dpf.terminal_cost_fn = @terminal_cost_fn;
 
-% Extract meaningful results for a given initial condition
-x0 = [0 5];
-dps = forward_trace(dps, x0);
-
-% Do plotting here
-plot_results(dps, '-d');
+% Initiate and run the solver, do forwar tracing and plot the results
+dpf = yadpf_solve(dpf);
+dpf = yadpf_trace(dpf, [0 5]);
+yadpf_plot(dpf, '-o');
 
 % Additional plotting
 figure
 hold on
-plot(dps.x1_star, dps.x2_star, '-o', 'LineWidth', 2);
+plot(dpf.x_star{1}, dpf.x_star{2}, '-o', 'LineWidth', 2);
 xlabel('x')
 ylabel('y')
 
 %%
-function [x_next, y_next] = state_update_fn(x, y, ux, uy, ~)
-x_next = x + ux;
-y_next = y + uy;
+function X = state_update_fn(X, U, ~)
+X{1} = X{1} + U{1};
+X{2} = X{2} + U{2};
 end
 
 %%
-function J = stage_cost_fn(x, y, ux, uy, i, ~)
+function J = stage_cost_fn(X, U, i, ~)
 K = 40*(1:6);
 L = [1 1/2 1 2 1 1/2];
 % The last mass is not important, since the terminal node is "fixed".
 M = [2 1 3 2 1 0];   
 g = 9.807;
 
-d = sqrt(ux.^2 + uy.^2);      
+d = sqrt(U{1}.^2 + U{2}.^2);      
 T = 0.5 * K(i) * (d-L(i)).^2; % Energy by the spring
-V = (M(i) * g) .* y;          % Energy by the gravity
+V = (M(i) * g) .* X{2};          % Energy by the gravity
 J = T + V;                    % Total energy to minimize  
 end
 
 %%
-function J = terminal_cost_fn(x, y)
+function J = terminal_cost_fn(X)
 % Control gains for the terminal node
 k1 = 1000;
 k2 = 1000;
 
 % Final states
-xf = 5;
-yf = 4;
+xf = [5 4];
 
-J = k1.*(x-xf).^2 + k2.*(y-yf).^2;
+J = k1*(X{1}-xf(1)).^2 + k2*(X{2}-xf(2)).^2;
 end
