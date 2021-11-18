@@ -1,10 +1,11 @@
-function dpf = yadpf_solve(dpf)
-% Solve an optimal control problem with backward dynamic programming
+function dpf = yadpf_visolve(dpf, tol)
+% Solve an optimal control problem with value iteration
 %
 % Syntax:  dpf = yadf_solve(dpf)
 %
 % Inputs:
 %    dpf - The data structure for the optimal control problem
+%    tol - A small number that is used to terminate the value iteration 
 %
 % Outputs:
 %    dpf - The same data structure as the input, but with the results
@@ -23,10 +24,13 @@ function dpf = yadpf_solve(dpf)
 
 %------------- BEGIN CODE --------------
 
+if nargin < 2
+    tol = 1e-3;
+end
+
 % Calculate number of the states, the inputs and the nodes
 n_states = numel(dpf.states);
 n_inputs = numel(dpf.inputs);
-
 
 ub = cellfun(@max, dpf.states);
 lb = cellfun(@min, dpf.states);
@@ -36,29 +40,15 @@ nU = cellfun('length', dpf.inputs);
 nXX = prod(nX);
 nUU = prod(nU);
 
-% Stire the optimal next-state
-descendant_matrix = zeros(dpf.n_horizon, nXX, 'uint32');
+% Store the optimal next-state
+descendant_matrix = zeros(nXX,'uint32');
 
 % For storing the optimal input
-U_star_matrix(1:n_inputs) = deal({zeros(dpf.n_horizon,nXX, 'uint32')});
+U_star_matrix(1:n_inputs) = deal({zeros(nXX, 'uint32')});
 
-fprintf('Horizons : %i stages\n',dpf.n_horizon);
 fprintf('State    : %i nodes\n', nXX);
 fprintf('Input    : %i nodes\n', nUU);
 fprintf('Calculating terminal cost...\n')
-
-% X : all possible state combination (nodes)
-a = cell(1, n_states);
-[a{:}] = ind2sub(nX, 1:nXX);
-
-X = cell(1,  n_states);
-for i = 1 : n_states
-    X{i} = dpf.states{i}(a{i});
-end
-
-% Terminal cost
-J = dpf.terminal_cost_fn(X);
-clear X;
 
 % Create X and U, their dimensiona are: nUU times nXX
 i = fastreprowvec(1:nXX, nUU);
@@ -112,11 +102,14 @@ clear X_next r;
 fprintf('\nComplete!\n');
 
 % Stage-wise iteration
-fprintf('Running backward dynamic programming algorithm...\n');
-fprintf('Stage-');
+fprintf('Running value iteration algorithm...\n');
+fprintf('Iteration #');
 ll = 0;
 
-for k = dpf.n_horizon-1 : -1 : 1
+converged = 0;
+J = zeros(1, nXX);
+
+for k = 1 : dpf.max_iter 
     fprintf(repmat('\b',1,ll));
     ll = fprintf('%i',k);
     
@@ -124,23 +117,38 @@ for k = dpf.n_horizon-1 : -1 : 1
           
     [J_min, J_min_idx] = min(dpf.stage_cost_fn(X, U, k, dpf.T_ocp) + ...
                              reshape(J_old(next_ind), nUU, nXX), [], 1);
-      
-    descendant_matrix(k,:) = next_ind(fastsub2ind2([nUU nXX], ...
-                                      J_min_idx, 1:nXX))';
+    
+    descendant_matrix = next_ind(fastsub2ind2([nUU nXX], J_min_idx, 1:nXX))';
     
     [b{:}]  = ind2sub(nU, J_min_idx);
     for i = 1 : n_inputs
-        U_star_matrix{i}(k,:) = b{i};    
+        U_star_matrix{i} = b{i};    
     end
 
     J = J_min;    
+    
+    delta_J(k) = norm(J-J_old);
+    if  delta_J(k) < tol
+        converged = 1;
+        break;
+    end
+    
 end
 
 fprintf('\nComplete!\n')
 
+if converged == 1
+    fprintf('Converging after %i iterations with a tollerance of %f!\n', k, tol);    
+else
+    fprintf('Still NOT converging after = %i iterations!\n', k);
+    fprintf(['  Tracing may fail!\n' ...
+             '  Consider increasing the number of maximum iterations.\n']);
+end
+
 % Store the results
-dpf.descendant_matrix = descendant_matrix;
-dpf.U_star_matrix     = U_star_matrix;
+dpf.n_iter             = k;
+dpf.descendant_matrix  = descendant_matrix;
+dpf.U_star_matrix      = U_star_matrix;
 
 % Additional information that might be still needed
 dpf.n_states = n_states;
@@ -152,6 +160,7 @@ dpf.ub       = ub;
 dpf.nUU      = nUU;
 dpf.nXX      = nXX;
 
+dpf.delta_J  = delta_J;
 dpf.method   = 'vi';
 
 end

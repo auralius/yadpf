@@ -1,4 +1,24 @@
 function yadpf_plot(dpf, line_style)
+% Plot the optimal inputs and the optimal states
+%
+% Syntax:  yadpf_plot(dpf, line_style)
+%
+% Inputs:
+%    dpf - The data structure for the optimal control problem
+%    line_style  - The line style, similar to the line style as in the
+%                  ordinary plot command
+%
+% Outputs: -   
+%
+% Author:
+%   Auralius Manurung
+%   Universitas Pertamina 
+%   auralius.manurung@ieee.org
+
+%------------- BEGIN CODE --------------
+if nargin < 2
+    line_style = '-';
+end
 
 n =  length(dpf.u_star{1});
 tf = n * dpf.T_dyn;
@@ -36,3 +56,4 @@ for i = 1 : dpf.n_inputs
 end
 
 end
+%------------- END OF CODE --------------

@@ -1,17 +1,20 @@
+function reachability_plot_1X(dpf, terminal_state, terminal_tol)
 % Draw reachability plot for a system with one state variable
 %
-% function reachability_plot_1X(dps, ...
-%                               terminal_tol)
+% Inputs:
 %
-% Arguments:
+%     dpf -  data structure from the dynamic programming function
+%     terminal_state - desired terminal state
+%     terminal_tol - terminal node tollerance
 %
-%     dpf            = data structure from the dynamic programming function
-%     terminal_state = desired terminal state
-%     terminal_tol   = terminal node tollerance
 %
-function reachability_plot_1X(dpf, ...
-                              terminal_state, ... 
-                              terminal_tol)
+% Author:
+%   Auralius Manurung
+%   Universitas Pertamina 
+%   auralius.manurung@ieee.org
+
+%------------- BEGIN CODE --------------
+
 figure;
 hold on;
 
@@ -70,3 +73,4 @@ ax.XTick = unique(round(ax.XTick) );
 get(gca,'fontname');  
 set(gca,'fontname','times')  % Set it to times
 end
+%------------- END OF CODE --------------

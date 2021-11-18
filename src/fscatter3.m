@@ -1,4 +1,4 @@
-function [h] = fscatter3(X,Y,Z,C,cmap);
+function [h] = fscatter3(X,Y,Z,C,cmap)
 % [h] = fscatter3(X,Y,Z,C,cmap);
 % Plots point cloud data in cmap color classes and 3 Dimensions,
 % much faster and very little memory usage compared to scatter3 !
@@ -8,6 +8,9 @@ function [h] = fscatter3(X,Y,Z,C,cmap);
 % cmap is optional colourmap to be used
 % h are handles to the line objects
 % Felix Morsdorf, Jan 2003 (last update Oct. 2010), Remote Sensing Laboratory Zuerich
+
+%------------- BEGIN CODE --------------
+
   if nargin == 1
     if isfield(X,'int')
       C = X.int;
@@ -77,3 +80,4 @@ caxis([min(C) max(C)])
 %axis equal;rotate3d on;view(3);
 %box on
 %hcb = colorbar('location','east');
+%------------- END OF CODE --------------

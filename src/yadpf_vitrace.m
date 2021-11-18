@@ -1,4 +1,4 @@
-function dpf = yadpf_trace(dpf, x0)
+function dpf = yadpf_vitrace(dpf, x0, xf, max_horizon)
 % Forward tracing to extract the optimal inputs for a given initial condition
 % By using the extracted optimal input, the sytem is simulated to calculate 
 % the resulting optimal states
@@ -8,6 +8,8 @@ function dpf = yadpf_trace(dpf, x0)
 % Inputs:
 %    dpf - The data structure for the optimal control problem
 %    x0  - The initial states (1xn vector)
+%    xf  - The terminal states (1xn vector)
+%    max_horizon - Terminate the tracing if the terminal states are not reached
 %
 % Outputs: -   
 %    dpf - The data same data structure with the optimal inputs stored in
@@ -19,28 +21,52 @@ function dpf = yadpf_trace(dpf, x0)
 %   auralius.manurung@ieee.org
 
 %------------- BEGIN CODE --------------
-u_star(1:dpf.n_inputs) = deal({zeros(dpf.n_horizon-1, 1)});
 
-r = cell(1, dpf.n_states);
+if nargin < 4
+    max_horizon = 10000;
+end
+
+u_star(1:dpf.n_inputs) = deal({0});
+
+s = cell(1, dpf.n_states); % source
 for i = 1 : dpf.n_states
-    r{i} = snap(x0(i), dpf.lb(i), dpf.ub(i), dpf.nX(i));
+    s{i} = snap(x0(i), dpf.lb(i), dpf.ub(i), dpf.nX(i));
 end
 
 if dpf.n_states > 1
-    id = sub2ind(dpf.nX, r{:});
+    s_id = sub2ind(dpf.nX, s{:});
 else
-    id = [r{:}];
+    s_id = [s{:}];
+end
+
+d = cell(1, dpf.n_states); % destination
+for i = 1 : dpf.n_states
+    d{i} = snap(xf(i), dpf.lb(i), dpf.ub(i), dpf.nX(i));
 end
 
 % Trace to the end horizon
-fprintf('Forward tracing, please wait...\n')
+fprintf('Tracing, please wait...\n')
 
-for k = 1 : dpf.n_horizon-1
+k = 1;
+while(1)
     for i = 1 : dpf.n_inputs
-        u_star{i}(k) = dpf.inputs{i}(dpf.U_star_matrix{i}(k, id));        
+        u_star{i}(k,1) = dpf.inputs{i}(dpf.U_star_matrix{i}(s_id));        
     end
     
-    id = dpf.descendant_matrix(k, id);
+    s_id = dpf.descendant_matrix(s_id);
+
+    [s{:}]  = ind2sub(dpf.nX, s_id); 
+    if norm([s{:}] - [d{:}]) < 1e-3
+        break;
+    end
+
+    k = k + 1;
+
+    if (k > max_horizon)
+        error(['Tracing fails to reach terminal node!' ...
+            ' Are you sure that the desired terminal node is similar' ...
+            ' as in the stage cost function?']);
+    end
 end
 
 % Upsampling from T_ocp to T_dyn
