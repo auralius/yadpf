@@ -4,7 +4,7 @@
 
 Yet Another Dynamic Programming Function
 
-This is a generic implemetation of a dynamic programming algorithm. 
+This is a generic implementation of dynamic programming algorithm and value iteration algorithm.
 
 This is sitll an ongoing work. Please check [here](https://www.mathcha.io/editor/X9JLdiqLS21T1NJNX4h6BGODQSxG7zwUpZG7LM) for a more detailed document.
 
