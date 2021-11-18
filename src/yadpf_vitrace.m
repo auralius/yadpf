@@ -63,11 +63,13 @@ while(1)
     k = k + 1;
 
     if (k > max_horizon)
-        error(['Tracing fails to reach terminal node!' ...
-            ' Are you sure that the desired terminal node is similar' ...
-            ' as in the stage cost function?']);
+        disp(['Tracing fails to reach terminal node!' ...
+              ' Are you sure that the desired terminal node is similar' ...
+              ' as in the stage cost function?']);
     end
 end
+
+dpf.n_horizon = k;
 
 % Upsampling from T_ocp to T_dyn
 n = length(u_star{1});

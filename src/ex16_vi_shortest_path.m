@@ -25,7 +25,7 @@ Ux  = [-1 0 1];
 Uy  = [-1 0 1];
 
 % Prepare the structure
-dpf.states           = {X, Y};
+dpf.states           = {X Y};
 dpf.inputs           = {Ux Uy};
 dpf.T_ocp            = 1;
 dpf.T_dyn            = 1;

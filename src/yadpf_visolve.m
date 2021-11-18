@@ -41,10 +41,10 @@ nXX = prod(nX);
 nUU = prod(nU);
 
 % Store the optimal next-state
-descendant_matrix = zeros(nXX,'uint32');
+descendant_matrix = zeros(1, nXX,'uint32');
 
 % For storing the optimal input
-U_star_matrix(1:n_inputs) = deal({zeros(nXX, 'uint32')});
+U_star_matrix(1:n_inputs) = deal({zeros(1,nXX, 'uint32')});
 
 fprintf('State    : %i nodes\n', nXX);
 fprintf('Input    : %i nodes\n', nUU);
