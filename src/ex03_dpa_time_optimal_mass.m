@@ -8,6 +8,7 @@ clc
 
 % Initial states: [Pos Vel]
 x0 = [0 0];
+xf = [0.5 0];
 
 % Setup the states and the inputs
 X1 = 0 : 0.001 : 1; % Position
@@ -33,6 +34,8 @@ dpf.terminal_cost_fn    = @terminal_cost_fn;
 dpf = yadpf_solve(dpf);
 dpf = yadpf_trace(dpf, x0);
 yadpf_plot(dpf, '-');
+
+yadpf_rplot(dpf, xf, 0.01);
 
 %% ========================================================================
 function X = state_update_fn(X, U, dt)

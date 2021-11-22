@@ -15,7 +15,6 @@ F = -4 : 0.1   : 4; % Applied force
 Tf = 1;          % 1 second
 T_ocp = 0.1;     % Temporal discretization step
 t  = 0 : T_ocp : Tf;
-n_horizon = length(t);
 
 dpf.states           = {X, V};
 dpf.inputs           = {F};

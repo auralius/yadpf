@@ -55,5 +55,16 @@ for i = 1 : dpf.n_inputs
     active_plot = active_plot + 1;
 end
 
+if strcmp(dpf.method, 'vi') == 1 % Plot the cost evolution
+    figure;
+    hold on;
+    plot(dpf.delta_J, 'LineWidth', 2);
+    line ([1 dpf.n_iter], [1 0],'LineStyle','--', 'Color', 'red');
+    title("Cost Evolution");
+    xlabel('#Iteration');
+    xlim ([1 dpf.n_iter]);
+    ylim([0, max(dpf.delta_J)]);
+end
+
 end
 %------------- END OF CODE --------------

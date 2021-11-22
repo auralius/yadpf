@@ -36,7 +36,7 @@ yadpf_plot(dpf, '-');
 visualize(dpf);
 
 % Draw the reachability plot, this may take quite some time
-% yadpf_rplot(dpf, [0.5 0], 0.1); 
+yadpf_rplot(dpf, [0.5 0], 0.1); 
 
 %% The state update function
 function X = state_update_fn(X, U, ~)
@@ -54,9 +54,8 @@ xf = [0.5 0];  % Terminal state
 
 r1 = 1000;
 r2 = 1000;
-r3 = 5;
 
-J = r1*(X{1}-xf(1)).^2 + r2*(X{2}-xf(2)).^2 + r3*U{1}.^2;
+J = r1*(X{1}-xf(1)).^2 + r2*(X{2}-xf(2)).^2;
 end
 
 %% The terminal cost function

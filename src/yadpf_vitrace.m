@@ -1,4 +1,4 @@
-function dpf = yadpf_vitrace(dpf, x0, xf, max_horizon)
+function dpf = yadpf_vitrace(dpf, x0, xf, max_horizon, tol)
 % Forward tracing to extract the optimal inputs for a given initial condition
 % By using the extracted optimal input, the sytem is simulated to calculate 
 % the resulting optimal states
@@ -9,7 +9,10 @@ function dpf = yadpf_vitrace(dpf, x0, xf, max_horizon)
 %    dpf - The data structure for the optimal control problem
 %    x0  - The initial states (1xn vector)
 %    xf  - The terminal states (1xn vector)
-%    max_horizon - Terminate the tracing if the terminal states are not reached
+%    max_horizon - Terminate the tracing anyway even if the terminal states 
+%                  are not reached
+%    tol - How close should we be to the terminal node before we terminate
+%          the tracing and consider it is a success
 %
 % Outputs: -   
 %    dpf - The data same data structure with the optimal inputs stored in
@@ -24,19 +27,26 @@ function dpf = yadpf_vitrace(dpf, x0, xf, max_horizon)
 
 if nargin < 4
     max_horizon = 10000;
+    tol = 1e-3;
+elseif nargin < 5
+    tol = 1e-3;
 end
 
-u_star(1:dpf.n_inputs) = deal({0});
+u_star_unsimulated(1:dpf.n_inputs) = deal({0});  % the original optimal inputs, before up-sampling
+u_star(1:dpf.n_inputs) = deal({0});              % the up-sampled optimal inputs 
 
-s = cell(1, dpf.n_states); % source
+x_star_unsimulated(1:dpf.n_states) = deal({0});  % the optimal unsimulated states, this is taken from the descendant matrix
+
+s_sub = cell(1, dpf.n_states); % source
 for i = 1 : dpf.n_states
-    s{i} = snap(x0(i), dpf.lb(i), dpf.ub(i), dpf.nX(i));
+    s_sub{i} = snap(x0(i), dpf.lb(i), dpf.ub(i), dpf.nX(i));
+    x_star_unsimulated{i} = dpf.states{i}(s_sub{i});
 end
 
 if dpf.n_states > 1
-    s_id = sub2ind(dpf.nX, s{:});
+    s_id = sub2ind(dpf.nX, s_sub{:});
 else
-    s_id = [s{:}];
+    s_id = [s_sub{:}];
 end
 
 d = cell(1, dpf.n_states); % destination
@@ -50,13 +60,19 @@ fprintf('Tracing, please wait...\n')
 k = 1;
 while(1)
     for i = 1 : dpf.n_inputs
-        u_star{i}(k,1) = dpf.inputs{i}(dpf.U_star_matrix{i}(s_id));        
+        u_star_unsimulated{i}(k,1) = dpf.inputs{i}(dpf.U_star_matrix{i}(s_id));        
     end
     
     s_id = dpf.descendant_matrix(s_id);
 
-    [s{:}]  = ind2sub(dpf.nX, s_id); 
-    if norm([s{:}] - [d{:}]) < 1e-3
+    [s_sub{:}]  = ind2sub(dpf.nX, s_id); 
+    
+    for i = 1 : dpf.n_states
+        x_star_unsimulated{i}(k+1) = dpf.states{i}(s_sub{i});        
+    end
+    
+    if norm([s_sub{:}] - [d{:}]) < tol
+        fprintf('Tracing succeeds within a tolerance of %f\n', tol)
         break;
     end
 
@@ -66,17 +82,18 @@ while(1)
         disp(['Tracing fails to reach terminal node!' ...
               ' Are you sure that the desired terminal node is similar' ...
               ' as in the stage cost function?']);
+        break;
     end
 end
 
 dpf.n_horizon = k;
 
 % Upsampling from T_ocp to T_dyn
-n = length(u_star{1});
+n = length(u_star_unsimulated{1});
 r = dpf.T_ocp/dpf.T_dyn;
 
 for i = 1 : dpf.n_inputs
-    u_star{i}  = conv(upsample(u_star{i}, r),ones(r,1));
+    u_star{i}  = conv(upsample(u_star_unsimulated{i}, r),ones(r,1));
 
     % Trim and pad the last data, ZOH-method
     u_star{i} = u_star{i}(1:n*r);
@@ -110,8 +127,11 @@ end
 
 fprintf('Complete!\n')
 
-dpf.u_star = u_star;
-dpf.x_star = x_star;
+dpf.u_star_unsimulated = u_star_unsimulated; % before the upsampleg, taken from the U_star_matrix
+dpf.u_star             = u_star;             % upsampled, used for the dynamic simulation
+
+dpf.x_star_unsimulated = x_star_unsimulated; % coarse, unsimulated, taken from the descendant matrix
+dpf.x_star             = x_star;             % taken from the simulation results
 
 end
 %------------- END OF CODE --------------

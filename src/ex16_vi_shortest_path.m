@@ -34,7 +34,7 @@ dpf.state_update_fn  = @state_update_fn;
 dpf.stage_cost_fn    = @stage_cost_fn;
 
 % Initiate and run the solver, do forwar tracing and plot the results
-dpf = yadpf_visolve(dpf);
+dpf = yadpf_visolve(dpf, 0.99);
 dpf = yadpf_vitrace(dpf, [1 1], [50 60]); % From [1 1] to [50 60]
 yadpf_plot(dpf, '-');
 

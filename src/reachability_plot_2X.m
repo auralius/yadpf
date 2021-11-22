@@ -17,10 +17,11 @@ function reachability_plot_2X(dpf, terminal_state, terminal_tol)
 figure;
 hold on;
 
-x1_star = zeros(1, dpf.n_horizon);
-x2_star = zeros(1, dpf.n_horizon);
-buffer_x1  = zeros(dpf.nXX, dpf.n_horizon);
-buffer_x2  = zeros(dpf.nXX, dpf.n_horizon);
+x1 = zeros(1, dpf.n_horizon);
+x2 = zeros(1, dpf.n_horizon);
+
+x1s  = zeros(dpf.nXX, dpf.n_horizon);
+x2s  = zeros(dpf.nXX, dpf.n_horizon);
 
 % Test for all nodes at stage-1 (every possibe ICs)
 fprintf('Generating the reachability plot...\n')
@@ -35,37 +36,37 @@ for j = 1:dpf.nXX
     
     for k = 1 : dpf.n_horizon-1
         [r,c] = ind2sub([dpf.nX(1)], id);
-        x1_star(k) = dpf.states{1}(r);
-        x2_star(k) = dpf.states{2}(c);
+        x1(k) = dpf.states{1}(r);
+        x2(k) = dpf.states{2}(c);
         id = dpf.descendant_matrix(k,id);
     end
     
     % The last stage
     [r,c] = ind2sub([dpf.nX(1) dpf.nX(2)], id);
-    x1_star(dpf.n_horizon) = dpf.states{1}(r);
-    x2_star(dpf.n_horizon) = dpf.states{2}(c);
+    x1(dpf.n_horizon) = dpf.states{1}(r);
+    x2(dpf.n_horizon) = dpf.states{2}(c);
     
     % Check the terminal stage, does it end at the desired terminal node?
-    x = [dpf.states{1}(r) dpf.states{2}(c)];
-    if norm(x - terminal_state) < terminal_tol
-        buffer_x1(j,:) = x1_star;     % If yes, keep them
-        buffer_x2(j,:) = x2_star;     % If yes, keep them
+    x3s = [dpf.states{1}(r) dpf.states{2}(c)];
+    if norm(x3s - terminal_state) < terminal_tol
+        x1s(j,:) = x1;     % If yes, keep them
+        x2s(j,:) = x2;     % If yes, keep them
     end
 end
-clear x1_star x2_star;
+clear x1 x2;
 
 fprintf('\nComplete!\n')
 
 % Delete rows that all zeros
-a = any(buffer_x1+buffer_x2, 2);
-buffer_x1(~a,:) = [];  
-buffer_x2(~a,:) = [];  
+a = any(x1s+x2s, 2);
+x1s(~a,:) = [];  
+x2s(~a,:) = [];  
 
 % Convert to 3D pointclouds
-k = repmat(1:dpf.n_horizon, size(buffer_x1,1),1);
-X = [reshape(buffer_x1,[],1) reshape(buffer_x2,[],1) reshape(k,[],1)];
+k = repmat(1:dpf.n_horizon, size(x1s,1),1);
+X = [reshape(x1s,[],1) reshape(x2s,[],1) reshape(k,[],1)];
 X = unique(X,'rows');
-clear a buffer_x1 buffer_x2;
+clear a x1s x2s;
 
 if isempty(X)
     error('No reachable states are foud, increase the tollerance...\n');
@@ -73,6 +74,9 @@ end
 
 % Scatter plot the pointclouds
 fscatter3(X(:,1), X(:,2), X(:,3), X(:,3), jet);
+hold on
+plot3(dpf.x_star_unsimulated{1}, dpf.x_star_unsimulated{2}, ...
+      1:dpf.n_horizon, 'k', 'LineWidth', 3);
   
 % Make it beautiful
 xlim([min(dpf.states{1}) max(dpf.states{1})]);
@@ -85,7 +89,8 @@ title('Backward Reachability');
 
 view([-1 -1 1]);
 
-get(gca,'fontname');
-set(gca,'fontname','times');  % Set it to times   
+ax = gca;
+ax.SortMethod = 'childorder';
+ax.FontName = 'times';
 end
 %------------- END OF CODE --------------

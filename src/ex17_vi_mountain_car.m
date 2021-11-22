@@ -19,14 +19,17 @@ dpf.states           = {P V};
 dpf.inputs           = {U};
 dpf.T_ocp            = 1;
 dpf.T_dyn            = 1;
-dpf.max_iter         = 1000;
+dpf.max_iter         = 1500;
 dpf.state_update_fn  = @state_update_fn;
 dpf.stage_cost_fn    = @stage_cost_fn;
 
 % Initiate and run the solver, do forwar tracing and plot the results
-dpf = yadpf_visolve(dpf);
+dpf = yadpf_visolve(dpf, 0.99);
 dpf = yadpf_vitrace(dpf, [-0.5 0], [0.5 0]); % Initial state: [-0.5 0]
 yadpf_plot(dpf, '-');
+
+% Policy plot
+yadpf_pplot(dpf)
 
 % Animate the mountatin car
 visualize(dpf);
@@ -51,9 +54,8 @@ xf = [0.5 0];  % Terminal state
 
 r1 = 1000;
 r2 = 1000;
-r3 = 0;
 
-J = r1*(X{1}-xf(1)).^2 + r2*(X{2}-xf(2)).^2 + r3*U{1}.^2;
+J = r1*(X{1}-xf(1)).^2 + r2*(X{2}-xf(2)).^2;
 end
 
 %% -----------------------------------------------------------------------

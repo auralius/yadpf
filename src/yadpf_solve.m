@@ -152,7 +152,7 @@ dpf.ub       = ub;
 dpf.nUU      = nUU;
 dpf.nXX      = nXX;
 
-dpf.method   = 'vi';
+dpf.method   = 'dpa';
 
 end
 %------------- END OF CODE --------------

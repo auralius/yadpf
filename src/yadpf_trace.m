@@ -19,17 +19,22 @@ function dpf = yadpf_trace(dpf, x0)
 %   auralius.manurung@ieee.org
 
 %------------- BEGIN CODE --------------
-u_star(1:dpf.n_inputs) = deal({zeros(dpf.n_horizon-1, 1)});
+%u_star(1:dpf.n_inputs) = deal({zeros(dpf.n_horizon-1, 1)});
 
-r = cell(1, dpf.n_states);
+u_star_unsimulated(1:dpf.n_inputs) = deal({0});  % the original optimal inputs, before up-sampling
+u_star(1:dpf.n_inputs)             = deal({0});              % the up-sampled optimal inputs 
+x_star_unsimulated(1:dpf.n_states) = deal({0});  % the optimal unsimulated states, this is taken from the descendant matrix
+
+s_sub = cell(1, dpf.n_states);
 for i = 1 : dpf.n_states
-    r{i} = snap(x0(i), dpf.lb(i), dpf.ub(i), dpf.nX(i));
+    s_sub{i} = snap(x0(i), dpf.lb(i), dpf.ub(i), dpf.nX(i));
+    x_star_unsimulated{i} = dpf.states{i}(s_sub{i});
 end
 
 if dpf.n_states > 1
-    id = sub2ind(dpf.nX, r{:});
+    s_id = sub2ind(dpf.nX, s_sub{:});
 else
-    id = [r{:}];
+    s_id = [s_sub{:}];
 end
 
 % Trace to the end horizon
@@ -37,18 +42,24 @@ fprintf('Forward tracing, please wait...\n')
 
 for k = 1 : dpf.n_horizon-1
     for i = 1 : dpf.n_inputs
-        u_star{i}(k) = dpf.inputs{i}(dpf.U_star_matrix{i}(k, id));        
+        u_star_unsimulated{i}(k,1) = dpf.inputs{i}(dpf.U_star_matrix{i}(k, s_id));        
     end
     
-    id = dpf.descendant_matrix(k, id);
+    s_id = dpf.descendant_matrix(k, s_id);
+    
+    [s_sub{:}]  = ind2sub(dpf.nX, s_id); 
+    
+    for i = 1 : dpf.n_states
+        x_star_unsimulated{i}(k+1) = dpf.states{i}(s_sub{i});        
+    end
 end
 
 % Upsampling from T_ocp to T_dyn
-n = length(u_star{1});
+n = length(u_star_unsimulated{1});
 r = dpf.T_ocp/dpf.T_dyn;
 
 for i = 1 : dpf.n_inputs
-    u_star{i}  = conv(upsample(u_star{i}, r),ones(r,1));
+    u_star{i}  = conv(upsample(u_star_unsimulated{i}, r),ones(r,1));
 
     % Trim and pad the last data, ZOH-method
     u_star{i} = u_star{i}(1:n*r);
@@ -82,8 +93,11 @@ end
 
 fprintf('Complete!\n')
 
-dpf.u_star = u_star;
-dpf.x_star = x_star;
+dpf.u_star_unsimulated = u_star_unsimulated; % before the upsampleg, taken from the U_star_matrix
+dpf.u_star             = u_star;             % upsampled, used for the dynamic simulation
+
+dpf.x_star_unsimulated = x_star_unsimulated; % coarse, unsimulated, taken from the descendant matrix
+dpf.x_star             = x_star;             % taken from the simulation results
 
 end
 %------------- END OF CODE --------------

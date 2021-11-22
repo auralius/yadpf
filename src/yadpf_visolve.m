@@ -1,11 +1,12 @@
-function dpf = yadpf_visolve(dpf, tol)
+function dpf = yadpf_visolve(dpf, gamma, tol)
 % Solve an optimal control problem with value iteration
 %
 % Syntax:  dpf = yadf_solve(dpf)
 %
 % Inputs:
 %    dpf - The data structure for the optimal control problem
-%    tol - A small number that is used to terminate the value iteration 
+%    tol - A small number that is used to terminate the value iteration and 
+%          consider it is a success 
 %
 % Outputs:
 %    dpf - The same data structure as the input, but with the results
@@ -25,6 +26,9 @@ function dpf = yadpf_visolve(dpf, tol)
 %------------- BEGIN CODE --------------
 
 if nargin < 2
+    gamma = 1;
+    tol = 1e-3;
+elseif nargin < 3
     tol = 1e-3;
 end
 
@@ -125,7 +129,7 @@ for k = 1 : dpf.max_iter
         U_star_matrix{i} = b{i};    
     end
 
-    J = J_min;    
+    J = gamma*J_min;    
     
     delta_J(k) = norm(J-J_old);
     if  delta_J(k) < tol
@@ -138,7 +142,7 @@ end
 fprintf('\nComplete!\n')
 
 if converged == 1
-    fprintf('Converging after %i iterations with a tollerance of %f!\n', k, tol);    
+    fprintf('Converging after %i iterations with a tolerance of %f!\n', k, tol);    
 else
     fprintf('Still NOT converging after = %i iterations!\n', k);
     fprintf(['  Tracing may fail!\n' ...
