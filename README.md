@@ -27,7 +27,7 @@ This is sitll an ongoing work. Please check [here](https://www.mathcha.io/editor
 ![](https://github.com/auralius/yadpf/blob/main/docs/mass_damper_3.png)
 
 
-## Ex.3 : Time-optimal mass-damper system
+## Ex.3 : Mass-damper system with minimum integral of squared error 
 
 ![](https://github.com/auralius/yadpf/blob/main/docs/time_optimal_mass_damper.png)
 
@@ -74,14 +74,14 @@ This is sitll an ongoing work. Please check [here](https://www.mathcha.io/editor
 ![](https://github.com/auralius/yadpf/blob/main/docs/piecewise_mass_spring_2.png)
 
 
-## Ex.10 : Time-optimal van der Pol equation with a control input
+## Ex.10 : Van der Pol equation with a control input
 
 ![](https://github.com/auralius/yadpf/blob/main/docs/time_optimal_van_der_pol_1.png)
 
 ![](https://github.com/auralius/yadpf/blob/main/docs/time_optimal_van_der_pol_2.png)
 
 
-## Ex.11 : Time-optimal stablizaton of an F8 aircraft
+## Ex.11 : Stablizaton of an F8 aircraft
 
 ![](https://github.com/auralius/yadpf/blob/main/docs/f8_aircraft.png)
 
@@ -108,3 +108,15 @@ This is sitll an ongoing work. Please check [here](https://www.mathcha.io/editor
 ![](https://github.com/auralius/yadpf/blob/main/docs/optimal_storage_strategy_1.png)
 
 ![](https://github.com/auralius/yadpf/blob/main/docs/optimal_storage_strategy_2.png)
+
+
+## Ex.20 : Stirred tank mixer
+
+![](https://github.com/auralius/yadpf/blob/main/docs/stirred_tank_mixer.png)
+
+
+## Ex.22 : Vertical ascend rocket
+
+![](https://github.com/auralius/yadpf/blob/main/docs/vertical_ascend_rocket.png)
+
+

@@ -55,32 +55,28 @@ dpf = yadpf_trace(dpf, [deg2rad(26.7) 0 0]);
 yadpf_plot(dpf, '-');
 %%
 function X = state_update_fn(X, U, dt)
-u  = U{1};
-x1 = X{1};
-x2 = X{2};
-x3 = X{3};
 
-X{1} = (-0.877*x1 + x3 - 0.088*(x1.*x3) + 0.47.*(x1.^2) - ...
-        0.019*(x2.^2) - (x1.^2).*x3 + 3.846*(x1.^3) - 0.215*u + ...
-        0.28*((x1.^2).*u) + 0.47*(x1.*(u.^2)) + 0.63*(u.^3))*dt + x1;
-X{2} = x3*dt + x2;
-X{3} = (-4.208*x1 - 0.396*x3 - 0.47*(x1.^2) - 3.564*(x1.^3) - ...
-        20.967*u + 6.265*((x1.^2).*u) + 46*(x1.*(u.^2)) + ...
-        61.4*u.^3)*dt + x3;
+X{1} = (-0.877*X{1} + X{3} - 0.088*X{1}.*X{3} + 0.47*X{1}.^2 - ...
+        0.019*X{2}.^2 - X{1}.^2.*X{3} + 3.846*X{1}.^3 - 0.215*U{1} + ...
+        0.28*X{1}.^2.*U{1} + 0.47*X{1}.*U{1}.^2 + 0.63*U{1}.^3)*dt + X{1};
+X{2} = X{3}*dt + X{2};
+X{3} = (-4.208*X{1} - 0.396*X{3} - 0.47*X{1}.^2 - 3.564*X{1}.^3 - ...
+        20.967*U{1} + 6.265*X{1}.^2.*U{1} + 46*X{1}.*U{1}.^2 + ...
+        61.4*U{1}.^3)*dt + X{3};
 end
 
 %%
 function J = stage_cost_fn(X, U, ~, dt)
 % Tuning parameters q and r
-q1 = 100; % attack angle
-q2 = 100; % pitch
-q3 = 100; % pitch rate
-r  = 0;   % input can be zero, so we apply input minimizer, but not much
+q1 = 0.25; % attack angle
+q2 = 0.25; % pitch
+q3 = 0.25; % pitch rate
+r  = 1;   % input can be zero, so we apply input minimizer, but not much
 
 J = dt.*(q1*(X{1}.^2) + q2*(X{2}.^2) + q3*(X{3}.^2) + r*U{1}.^2);
 end
 
 %%
 function J = terminal_cost_fn(X)
-J = 100*((X{1}.^2) + (X{2}.^2) + (X{3}.^2) );
+J = 0.25*((X{1}.^2) + (X{2}.^2) + (X{3}.^2) );
 end

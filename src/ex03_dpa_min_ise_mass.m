@@ -1,6 +1,10 @@
 % Auralius Manurung
 % ME - Universitas Pertamina
 % 2021
+%
+% Moving a mass from one point to anothter point
+% The objective function is: minimum integral of squared error (ISE)
+%
 
 clear
 close all

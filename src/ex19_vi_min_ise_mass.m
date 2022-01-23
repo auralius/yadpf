@@ -1,12 +1,16 @@
 % Auralius Manurung
 % ME - Universitas Pertamina
 % 2021
+%
+% Moving a mass from one point to anothter point
+% The objective function is: minimum integral of squared error (ISE)
+%
 
 clear
 close all
 clc
 
-% Initial states: [Pos Vel]
+% Initial and terminal states: [Pos Vel]
 x0 = [0 0];
 xf = [0.5 0];
 
@@ -25,7 +29,7 @@ dpf.stage_cost_fn    = @stage_cost_fn;
 
 % Initiate and run the solver, do forward tracing and plot the results
 dpf = yadpf_visolve(dpf, 0.95);
-dpf = yadpf_vitrace(dpf, x0, xf,200);
+dpf = yadpf_vitrace(dpf, x0, xf, 200);
 yadpf_plot(dpf, '-');
 
 % Plot the policy matrix
