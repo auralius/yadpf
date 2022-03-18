@@ -2,7 +2,10 @@
 % ME - Universitas Pertamina
 % 2021
 %
-% Moving a mass from one point to anothter point
+% A mass (1 kg) is moving from x=0 to x=0.5 in exactly 1 second because of 
+% an exteral force. The damping coefficient is 0.1. At the destination, the
+% mass must stop moving. The external force is bounded (-4 N to 4 N).
+%
 % The objective function is: minimum integral of squared error (ISE)
 %
 

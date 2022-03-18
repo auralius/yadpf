@@ -1,14 +1,21 @@
 % Auralius Manurung
 % ME - Universitas Pertamina
 % 2021
+%
+% A mass (1 kg) is moving from x=0 to x=0.5 in exactly 1 second because of 
+% an exteral force. The damping coefficient is 0.1. At the destination, the
+% mass must stop moving. The external force is bounded (-4 N to 4 N).
+%
+
 %%
+
 clear
 close all
 clc
 
 % Setup the states and the inputs
-X = 0 : 0.001 : 1; % Position
-V = 0 : 0.001 : 1; % Velocity
+X = 0  : 0.001 : 1; % Position
+V = 0  : 0.001 : 1; % Velocity
 F = -4 : 0.1   : 4; % Applied force
 
 % Setup the horizon
@@ -32,7 +39,7 @@ dpf = yadpf_trace(dpf, [0 0]); % Initial state: [0 0]
 yadpf_plot(dpf, '-');
 
 % Optional: draw the reachability plot
-yadpf_rplot(dpf, [0.5 0], 0.1);
+%yadpf_rplot(dpf, [0.5 0], 0.1);
 
 %% The state unpdate funtion 
 function X = state_update_fn(X, F, dt)

@@ -23,10 +23,12 @@ function dpf = yadpf_solve(dpf)
 
 %------------- BEGIN CODE --------------
 
+% A vvery large number
+LARGE_NUMBER = 1e10;
+
 % Calculate number of the states, the inputs and the nodes
 n_states = numel(dpf.states);
 n_inputs = numel(dpf.inputs);
-
 
 ub = cellfun(@max, dpf.states);
 lb = cellfun(@min, dpf.states);
@@ -36,7 +38,7 @@ nU = cellfun('length', dpf.inputs);
 nXX = prod(nX);
 nUU = prod(nU);
 
-% Stire the optimal next-state
+% Store the optimal next-state
 descendant_matrix = zeros(dpf.n_horizon, nXX, 'uint32');
 
 % For storing the optimal input
@@ -57,7 +59,11 @@ for i = 1 : n_states
 end
 
 % Terminal cost
+% J is a row vector with nXX elements, where nXX is the total number of
+% all possible discretized state combination. At the end of ot, we add a
+% very large number as a cost for the infeasible states.
 J = dpf.terminal_cost_fn(X);
+J = [J LARGE_NUMBER];
 clear X;
 
 % Create X and U, their dimensiona are: nUU times nXX
@@ -95,16 +101,22 @@ end
 
 % Bound the states within predefined constraints
 r = cell(1, n_states);
-for i = 1 : n_states
-    X_next{i} = min(max(X_next{i}, lb(i)), ub(i));
-    r{i} = snap(X_next{i}, fastsca2mat(lb(i),nUU,nXX), ...
-           fastsca2mat(ub(i),nUU,nXX), fastsca2mat(nX(i),nUU,nXX));    
+infeasible = cell(1, n_states);
+for i = 1 : n_states   
+    [r{i}, infeasible{i}] = snap(X_next{i}, fastsca2mat(lb(i),nUU,nXX), ...
+                  fastsca2mat(ub(i),nUU,nXX), fastsca2mat(nX(i),nUU,nXX));    
 end
 
 if n_states > 1
     next_ind = sub2ind(nX,r{:});
 else
     next_ind = [r{:}];
+end
+
+% Fine next states that are outside the boudaries, direct the index toward
+% J(nXX+1)
+for i = 1:n_states
+    next_ind(ind2sub(nX,infeasible{i})) = nXX + 1;
 end
 
 clear X_next r;
@@ -133,7 +145,7 @@ for k = dpf.n_horizon-1 : -1 : 1
         U_star_matrix{i}(k,:) = b{i};    
     end
 
-    J = J_min;    
+    J(1:nXX) = J_min;    
 end
 
 fprintf('\nComplete!\n')

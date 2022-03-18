@@ -8,6 +8,8 @@ This is a generic implementation of dynamic programming algorithm and value iter
 
 This is sitll an ongoing work. Please check [here](https://www.mathcha.io/editor/X9JLdiqLS21T1NJNX4h6BGODQSxG7zwUpZG7LM) for a more detailed document.
 
+Also, please check our published paper [here](https://doi.org/10.1016/j.softx.2022.101001).
+
 
 ## Ex.1 : Sutton's mountain car problem
 
