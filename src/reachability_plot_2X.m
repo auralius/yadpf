@@ -35,7 +35,7 @@ for j = 1:dpf.nXX
     id = j;
     
     for k = 1 : dpf.n_horizon-1
-        [r,c] = ind2sub([dpf.nX(1)], id);
+        [r,c] = ind2sub([dpf.nX(1) dpf.nX(2)], id);    
         x1(k) = dpf.states{1}(r);
         x2(k) = dpf.states{2}(c);
         id = dpf.descendant_matrix(k,id);

@@ -39,7 +39,7 @@ dpf = yadpf_trace(dpf, [0 0]); % Initial state: [0 0]
 yadpf_plot(dpf, '-');
 
 % Optional: draw the reachability plot
-%yadpf_rplot(dpf, [0.5 0], 0.1);
+yadpf_rplot(dpf, [0.5 0], 0.1);
 
 %% The state unpdate funtion 
 function X = state_update_fn(X, F, dt)

@@ -113,13 +113,14 @@ else
     next_ind = [r{:}];
 end
 
-% Fine next states that are outside the boudaries, direct the index toward
+% Find next states that are outside the boudaries, direct the index toward
 % J(nXX+1)
+next_index_ = next_ind;
 for i = 1:n_states
-    next_ind(ind2sub(nX,infeasible{i})) = nXX + 1;
+    next_index_(ind2sub(nX,infeasible{i})) = nXX + 1;
 end
 
-clear X_next r;
+clear X_next r infeasible;
 
 fprintf('\nComplete!\n');
 
@@ -135,7 +136,7 @@ for k = dpf.n_horizon-1 : -1 : 1
     J_old = J;
           
     [J_min, J_min_idx] = min(dpf.stage_cost_fn(X, U, k, dpf.T_ocp) + ...
-                             reshape(J_old(next_ind), nUU, nXX), [], 1);
+                             reshape(J_old(next_index_), nUU, nXX), [], 1);
       
     descendant_matrix(k,:) = next_ind(fastsub2ind2([nUU nXX], ...
                                       J_min_idx, 1:nXX))';
