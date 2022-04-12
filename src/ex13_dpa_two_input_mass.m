@@ -12,52 +12,56 @@ close all
 clc
 
 % Setup the states and the inputs
-X1 =  0 : 0.001 : 1;
-X2 =  0 : 0.01  : 1;
-U1 =  0 : 0.1   : 5;
-U2 = -4 : 0.1   : 0;
+X  =  0 : 0.001 : 1;
+V  =  0 : 0.001 : 1;
+F1 =  0 : 0.1   : 3;
+F2 = -4 : 0.1   : 0;
 
 % Setup the horizon
-Tf = 1;     % 1 second
-dt = 0.2;   % Temporal discretization step
-t = 0:dt:Tf;
-n_horizon = length(t);
+Tf = 1;          % 1 second
+T_ocp = 0.1;     % Temporal discretization step
+t  = 0 : T_ocp : Tf;
 
-% Initiate the solver
-dps = dps_2X_2U(X1, X2, U1, U2, n_horizon, @state_update_fn, @stage_cost_fn, ...
-                @terminal_cost_fn, dt, 0.01);
+dpf.states           = {X, V};
+dpf.inputs           = {F1, F2};
+dpf.T_ocp            = T_ocp;
+dpf.T_dyn            = 0.01;        % Time step for the dynamic simulation         
+dpf.n_horizon        = length(t);
+dpf.state_update_fn  = @state_update_fn;
+dpf.stage_cost_fn    = @stage_cost_fn;
+dpf.terminal_cost_fn = @terminal_cost_fn;
 
-% Extract meaningful results
-dps = forward_trace(dps, [0 0]);
+% Initiate and run the solver, do forward tracing for the given initial 
+% condition and plot the results
+dpf = yadpf_solve(dpf);
+dpf = yadpf_trace(dpf, [0 0]); % Initial state: [0 0]
+yadpf_plot(dpf, '-');
 
-% Do plotting here
-plot_results(dps, '-');
+% Optional: draw the reachability plot
+yadpf_rplot(dpf, [0.5 0], 0.1);
 
 %%
-function [x1_next, x2_next] = state_update_fn(x1, x2, u1, u2, dt)
-m = 1;
- 
-x1_next = x1 + dt*x2;
-x2_next = x2 + dt/m.*(u1+u2);
+function X = state_update_fn(X, F, dt)
+m = 1;   % Mass
+b = 0.1; % Damping coefficient
+
+X{1} = X{1} + dt*X{2};
+X{2} = X{2} - b/m*dt.*X{2} + dt/m.*(F{1}+F{2});
 
 end
 
 %%
-function J = stage_cost_fn(x1, x2, u1, u2, k, dt)
-a1 = 1;
-a2 = 1;
-J = a1*dt*u1.^2 + a2*dt*u2.^2;
+function J = stage_cost_fn(X, F, k, dt)
+J = dt*F{1}.^2;
 end
 
-%%
-function J = terminal_cost_fn(x1, x2)
-% Weighting factors
-a2 = 1000;
-a3 = 1000;
+%% The terminal cost function
+function J = terminal_cost_fn(X)
+xf = [0.5 0];
 
-% Final states
-xf = 0.5;
-vf = 0;
+% Control gains
+r1 = 1000;
+r2 = 100;
 
-J = a2.*(x1-xf).^2 + a3.*(x2-vf).^2;
+J = r1*(X{1}-xf(1)).^2 + r2*(X{2}-xf(2)).^2;
 end

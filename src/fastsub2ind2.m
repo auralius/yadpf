@@ -7,7 +7,7 @@ function ind = fastsub2ind2(sizes, rows, cols)
 
 %------------- BEGIN CODE --------------
 
-ind = rows + (cols-1)*sizes(1);
+ind = uint32(rows + (cols - 1) * sizes(1));
 
 end
 %------------- END OF CODE --------------

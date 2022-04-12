@@ -20,21 +20,19 @@ function dpf = yadpf_trace(dpf, x0)
 
 %------------- BEGIN CODE --------------
 
+% Where to keep the tracing results
 u_star_lores(1:dpf.n_inputs) = deal({0});  % the original optimal inputs, before up-sampling
 u_star(1:dpf.n_inputs)       = deal({0});  % the up-sampled optimal inputs 
 x_star_lores(1:dpf.n_states) = deal({0});  % the optimal unsimulated states, this is taken from the descendant matrix
 
+% Start from the IC: x0
 s_sub = cell(1, dpf.n_states);
 for i = 1 : dpf.n_states
     s_sub{i} = snap(x0(i), dpf.lb(i), dpf.ub(i), dpf.nX(i));
     x_star_lores{i} = dpf.states{i}(s_sub{i});
 end
 
-if dpf.n_states > 1
-    s_id = sub2ind(dpf.nX, s_sub{:});
-else
-    s_id = [s_sub{:}];
-end
+s_id = flexible_sub2ind(dpf.nX, s_sub{:});
 
 % Trace to the end horizon
 fprintf('Forward tracing, please wait...\n')

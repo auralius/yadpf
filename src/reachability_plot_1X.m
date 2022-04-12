@@ -18,30 +18,42 @@ function reachability_plot_1X(dpf, terminal_state, terminal_tol)
 figure;
 hold on;
 
-x_star = zeros(1, dpf.n_horizon);
-buffer = zeros(dpf.nX, dpf.n_horizon);
+% Structure is slow, so we will unload the strucutre
+n_horizon = dpf.n_horizon;
+nXX = dpf.nXX;
+nX = dpf.nX;
+states = dpf.states;
+descendant_matrix = dpf.descendant_matrix;
+
+clear dpf;
+
+x_star = zeros(1, n_horizon);
+buffer = zeros(nX, n_horizon);
 
 % Test for all nodes at stage-1 (every possibe ICs)
 fprintf('Generating the reachability plot...\n')
 fprintf('Progress: ')
 ll = 0;
 
-for j = 1:dpf.nXX
-    fprintf(repmat('\b',1,ll));
-    ll = fprintf('%.1f %%',j/dpf.nXX*100);
+step = max(floor(nXX/10), 1);
+for j = 1 : nXX
+    if rem(j-1, step) == 0
+        fprintf(repmat('\b',1,ll));
+        ll = fprintf('%.1f %%',(j-1) / nXX*100);
+    end
        
     id = j;
     
-    for k = 1 : dpf.n_horizon-1
-        x_star(k) = dpf.states{1}(id);
-        id = dpf.descendant_matrix(k,id);
+    for k = 1 : n_horizon-1
+        x_star(k) = states{1}(id);
+        id = descendant_matrix(k,id);
     end
     
     % The last stage
-    x_star(dpf.n_horizon) = dpf.states{1}(id);
+    x_star(n_horizon) = states{1}(id);
     
     % Check the terminal stage, does it end at the desired terminal node?
-    if abs(dpf.states{1}(id) - terminal_state) < terminal_tol
+    if abs(states{1}(id) - terminal_state) < terminal_tol
         buffer(j,:) = x_star;     % If yes, keep them
     end
 end
@@ -49,7 +61,7 @@ end
 fprintf('\nComplete!\n')
 
 % Plot only the maximums and the minimums, color the area in between.
-buffer(~any(buffer,2),:) = [];  % Delete rows that are all zeros
+buffer(~any(buffer, 2), :) = [];  % Delete rows that are all zeros
 
 if isempty(buffer)
     error('No reachable states are foud, increase the tollerance...\n');
@@ -57,12 +69,12 @@ end
 
 mins = min(buffer);
 maxs = max(buffer);
-k = 1 : dpf.n_horizon;
+k = 1 : n_horizon;
 plot(k, mins);
 plot(k, maxs);
 patch([k fliplr(k)], [mins fliplr(maxs)], 'g')
 
-xlim([1 dpf.n_horizon+1])
+xlim([1 n_horizon+1])
 xlabel(['Stage-' '$k$'], 'Interpreter','latex')
 ylabel('$x_1(k)$', 'Interpreter','latex')
 title('Backward Reachability Plot');

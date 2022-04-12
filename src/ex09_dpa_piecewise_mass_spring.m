@@ -13,16 +13,16 @@ close all;
 clear
 
 % Setup the states and the inputs
-X   = 0  : 0.025 : 5;
-Y   = 0  : 0.025 : 5;
-Ux  = 0  : 0.05  : 2;
-Uy  = -3 : 0.05  : 3;
+X   = 0 :  0.02  : 5;
+Y   = 1 :  0.02  : 5;
+U  = 0  :  0.02  : 2;
+V  = -2 :  0.02  : 2;
 
 % Initiate the solver
 dpf.states           = {X, Y};
-dpf.inputs           = {Ux Uy};
+dpf.inputs           = {U, V};
 dpf.T_ocp            = 1;
-dpf.T_dyn            = 1;
+dpf.T_dyn            = 0.1;
 dpf.n_horizon        = 7;
 dpf.state_update_fn  = @state_update_fn;
 dpf.stage_cost_fn    = @stage_cost_fn;
@@ -31,18 +31,20 @@ dpf.terminal_cost_fn = @terminal_cost_fn;
 % Initiate and run the solver, do forwar tracing and plot the results
 dpf = yadpf_solve(dpf);
 dpf = yadpf_trace(dpf, [0 5]);
-yadpf_plot(dpf, '-o');
+yadpf_plot(dpf, '-');
 
 % Additional plotting
 figure
-plot(dpf.x_star{1}, dpf.x_star{2}, '-o', 'LineWidth', 2);
+hold on;
+plot(dpf.x_star{1}, dpf.x_star{2}, '-', 'LineWidth', 2);
+plot(dpf.x_star_unsimulated{1}, dpf.x_star_unsimulated{2}, '*r', 'LineWidth', 2);
 xlabel('x')
 ylabel('y')
 
 %% The state update function
-function X = state_update_fn(X, U, ~)
-X{1} = X{1} + U{1};
-X{2} = X{2} + U{2};
+function X = state_update_fn(X, U, dt)
+X{1} = X{1} + U{1} * dt;
+X{2} = X{2} + U{2} * dt;
 end
 
 %% The stage cost function
@@ -62,8 +64,8 @@ end
 %% The terminal cost function
 function J = terminal_cost_fn(X)
 % Control gains for the terminal node
-k1 = 1000;
-k2 = 1000;
+k1 = 300;
+k2 = 300;
 
 % Targetted terminal states
 xf = [5 4];

@@ -38,52 +38,22 @@ nU = cellfun('length', dpf.inputs);
 nXX = prod(nX);
 nUU = prod(nU);
 
-% Store the optimal next-state
-descendant_matrix = zeros(dpf.n_horizon, nXX, 'uint32');
-
-% For storing the optimal input
-U_star_matrix(1:n_inputs) = deal({zeros(dpf.n_horizon,nXX, 'uint32')});
-
 fprintf('Horizons : %i stages\n',dpf.n_horizon);
 fprintf('State    : %i nodes\n', nXX);
 fprintf('Input    : %i nodes\n', nUU);
 fprintf('Calculating terminal cost...\n')
 
-% X : all possible state combination (nodes)
-a = cell(1, n_states);
-[a{:}] = ind2sub(nX, 1:nXX);
-
-X = cell(1,  n_states);
-for i = 1 : n_states
-    X{i} = dpf.states{i}(a{i});
-end
-
 % Terminal cost
 % J is a row vector with nXX elements, where nXX is the total number of
 % all possible discretized state combination. At the end of ot, we add a
 % very large number as a cost for the infeasible states.
+X = generate_X(); % X contains all possible state combination (nodes)
 J = dpf.terminal_cost_fn(X);
-J = [J LARGE_NUMBER];
-clear X;
+clear X; % We are done with X
 
-% Create X and U, their dimensiona are: nUU times nXX
-i = fastreprowvec(1:nXX, nUU);
-a = cell(1, n_states);
-[a{:}]  = ind2sub(nX, i);
-
-i = fastrepcolvec((1:nUU)', nXX);
-b = cell(1, n_inputs);
-[b{:}]  = ind2sub(nU, i);
-
-X = cell(1,  n_states);
-for i = 1 : n_states
-    X{i} = dpf.states{i}(a{i});
-end
-
-U = cell(1,  n_inputs);
-for i = 1 : n_inputs
-    U{i} = dpf.inputs{i}(b{i});
-end
+% Create X and U, their dimensions are nUU times nXX
+X = generate_X_for_all_U();
+U = generate_U_for_all_X();
 
 % Simulate the system with sampling period of Tdyn
 fprintf('Simulating the system one step ahead...\n');
@@ -92,43 +62,47 @@ fprintf('Progress: ')
 n_iter = dpf.T_ocp / dpf.T_dyn; 
 
 ll = 0;
-X_next = X;
 for i = 1 : 1 : n_iter
     fprintf(repmat('\b',1,ll));
     ll = fprintf('%.1f %%', i/n_iter*100);
-    X_next = dpf.state_update_fn(X_next, U, dpf.T_dyn);
+    X = dpf.state_update_fn(X, U, dpf.T_dyn);
 end
 
 % Bound the states within predefined constraints
+fprintf('\nApplying the boundaries...\n');
 r = cell(1, n_states);
-infeasible = cell(1, n_states);
+infeas = cell(1, n_states);
 for i = 1 : n_states   
-    [r{i}, infeasible{i}] = snap(X_next{i}, fastsca2mat(lb(i),nUU,nXX), ...
-                  fastsca2mat(ub(i),nUU,nXX), fastsca2mat(nX(i),nUU,nXX));    
+    [r{i}, infeas{i}] = snap(X{i}, lb(i), ub(i), nX(i));    
+end 
+
+next_ind = flexible_sub2ind(nX, r{:});
+
+clear X r; % We are done with X and r
+
+% Find next states that are outside the boudaries, preset a very high cost!
+J_bounds = zeros(size(J));
+for i = 1 : n_states
+    J_bounds(next_ind(ind2sub(nX, infeas{i}))) = LARGE_NUMBER;
 end
 
-if n_states > 1
-    next_ind = sub2ind(nX,r{:});
-else
-    next_ind = [r{:}];
-end
+clear infeas; % We are done with infeasible
 
-% Find next states that are outside the boudaries, direct the index toward
-% J(nXX+1)
-next_index_ = next_ind;
-for i = 1:n_states
-    next_index_(ind2sub(nX,infeasible{i})) = nXX + 1;
-end
+fprintf('Complete!\n');
 
-clear X_next r infeasible;
+% Reload the original X
+X = generate_X_for_all_U();
 
-fprintf('\nComplete!\n');
+% Store the optimal next-state
+descendant_matrix = zeros(dpf.n_horizon, nXX, 'uint32');
+
+% For storing the optimal input
+U_star_matrix(1:n_inputs) = deal({zeros(dpf.n_horizon,nXX, 'uint32')});
 
 % Stage-wise iteration
 fprintf('Running backward dynamic programming algorithm...\n');
 fprintf('Stage-');
 ll = 0;
-
 for k = dpf.n_horizon-1 : -1 : 1
     fprintf(repmat('\b',1,ll));
     ll = fprintf('%i',k);
@@ -136,12 +110,12 @@ for k = dpf.n_horizon-1 : -1 : 1
     J_old = J;
           
     [J_min, J_min_idx] = min(dpf.stage_cost_fn(X, U, k, dpf.T_ocp) + ...
-                             reshape(J_old(next_index_), nUU, nXX), [], 1);
+                             J_old(next_ind) + J_bounds(next_ind), [], 1);
       
     descendant_matrix(k,:) = next_ind(fastsub2ind2([nUU nXX], ...
                                       J_min_idx, 1:nXX))';
     
-    [b{:}]  = ind2sub(nU, J_min_idx);
+    b = flexible_ind2sub(nU, J_min_idx);
     for i = 1 : n_inputs
         U_star_matrix{i}(k,:) = b{i};    
     end
@@ -151,7 +125,10 @@ end
 
 fprintf('\nComplete!\n')
 
+clear U X next_ind J_bounds % Avoid possible insufficient memory
+
 % Store the results
+dpf.J = J;
 dpf.descendant_matrix = descendant_matrix;
 dpf.U_star_matrix     = U_star_matrix;
 
@@ -166,6 +143,36 @@ dpf.nUU      = nUU;
 dpf.nXX      = nXX;
 
 dpf.method   = 'dpa';
+
+    function X = generate_X()
+    % Generate vector X: 1 times nXX
+        sub = flexible_ind2sub(nX, 1:nXX);
+        X = cell(1, n_states);
+        for n = 1 : n_states
+            X{n} = dpf.states{n}(sub{n});            
+        end
+        clear sub;
+    end
+
+    function X = generate_X_for_all_U()
+    % Generate matrix X: nUU times nXX    
+        sub = flexible_ind2sub(nX, fastreprowvec(1:nXX, nUU));
+        X = cell(1, n_states);
+        for n = 1 : n_states
+            X{n} = dpf.states{n}(sub{n});            
+        end
+        clear sub;
+    end
+
+    function U = generate_U_for_all_X()
+    % Generate matrix U: nUU times nXX
+        sub = flexible_ind2sub(nU, fastrepcolvec((1:nUU)', nXX));
+        U = cell(1,  n_inputs);
+        for n = 1 : n_inputs
+            U{n} = dpf.inputs{n}(sub{n});
+        end
+        clear sub;
+    end
 
 end
 %------------- END OF CODE --------------

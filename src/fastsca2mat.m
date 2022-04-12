@@ -3,7 +3,7 @@ function V = fastsca2mat(s, nr, nc)
 
 %------------- BEGIN CODE --------------
 
-V = s*ones(nr, nc);
+V = s * ones(nr, nc);
 
 end
 %------------- END OF CODE --------------
