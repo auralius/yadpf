@@ -97,9 +97,9 @@ plot3(x_star_unsimulated{1}, x_star_unsimulated{2}, ...
 xlim([min(states{1}) max(states{1})]);
 ylim([min(states{2}) max(states{2})]);
 
-zlabel(['Stage-' '$k$'], 'Interpreter','latex')
-xlabel('$x_1(k)$', 'Interpreter','latex')
-ylabel('$x_2(k)$', 'Interpreter','latex')
+zlabel(['Stage-' 'k'], 'Interpreter','tex')
+xlabel('x_1(k)', 'Interpreter','tex')
+ylabel('x_2(k)', 'Interpreter','tex')
 title('Backward Reachability');
 
 view([-1 -1 1]);

@@ -1,7 +1,7 @@
 % Auralius Manurung
 % ME - Universitas Pertamina
 % 2021
-% 
+%
 % Two-Oven Problem
 %
 % https://www.mit.edu/~dimitrib/DP_Slides_2015.pdf
@@ -12,6 +12,28 @@ clear
 close all
 clc
 
+%% The state update function
+function X = state_update_fn(X, U, ~)
+a = 0.7;
+X{1} = (1 - a).*X{1} + a * U{1};
+end
+
+%% The stage cost function
+function J = stage_cost_fn(X, U, k, ~)
+J = U{1}.^2;
+end
+
+%% The terminal cost function
+function J = terminal_cost_fn(X)
+xf = 300; % Desired terminal state
+
+% Weighting factor
+r = 1000;
+
+J = r * (X{1}-xf).^2;
+end
+
+% ------------------------------------------------------------------------------
 % Initial and terminal states
 x0 = 30;
 xf = 300;
@@ -37,24 +59,3 @@ yadpf_plot(dpf, '-');
 
 % Reachability plot
 yadpf_rplot(dpf, xf, 10);
-
-%% The state update function
-function X = state_update_fn(X, U, ~)
-a = 0.7;
-X{1} = (1 - a).*X{1} + a * U{1};
-end
-
-%% The stage cost function
-function J = stage_cost_fn(X, U, k, ~)
-J = U{1}.^2;
-end
-
-%% The terminal cost function
-function J = terminal_cost_fn(X)
-xf = 300; % Desired terminal state
-
-% Weighting factor
-r = 1000;
-
-J = r * (X{1}-xf).^2;
-end

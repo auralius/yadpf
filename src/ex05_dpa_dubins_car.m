@@ -4,7 +4,7 @@
 %
 % Dubin's car
 %
-% Jonsson, U. (2010). Optimal Control. 
+% Jonsson, U. (2010). Optimal Control.
 % See Example 2, page 3
 % https://www.math.kth.se/optsyst/grundutbildning/kurser/SF2852/LecturenotesScanned.pdf
 %
@@ -14,45 +14,6 @@ close all
 clc
 
 global v xf;
-
-% Define the Dubin's car parameters
-R = 0.5; % lower bound for the turning radius
-v = 1;   % the constant speed of the car 
-
-% Setup the states and the inputs
-X     = -1    : 0.01 : 1;
-Y     = -1    : 0.01 : 0;
-THETA = -2*pi : 0.01 : 0;
-OMEGA = [-v/R 0 v/R];
-
-% Setup the horizon
-T_ocp = 0.2; % Temporal discretization step
-Tf = pi;    % Theoritical completion time, otherwise the car will go around-and-around
-t = 0 : T_ocp : Tf;
-n_horizon = length(t);
-
-% Initial and terminal states
-% We are going to make a full cricle of radius R
-x0 = [0 0 0];
-xf = [0 0 -2*pi];
-
-% Build the structure
-dpf.states              = {X, Y, THETA};
-dpf.inputs              = {OMEGA};
-dpf.T_ocp               = T_ocp;
-dpf.T_dyn               = 0.01;
-dpf.n_horizon           = length(t);
-dpf.state_update_fn     = @state_update_fn;
-dpf.stage_cost_fn       = @stage_cost_fn;
-dpf.terminal_cost_fn    = @terminal_cost_fn;
-
-% Initiate and run the solver, do forwar tracing and plot the results
-dpf = yadpf_solve(dpf);
-dpf = yadpf_trace(dpf, x0);
-yadpf_plot(dpf, '-');
-
-% Animation
-visualize(dpf);
 
 %% The state update function
 function X = state_update_fn(X, U, dt)
@@ -102,8 +63,50 @@ for k = 1:length(dpf.x_star{1})
     px = [cos(theta) -sin(theta)] * [rx;ry];
     py = [sin(theta)  cos(theta)]* [rx;ry];
     set(hcar, 'XData', px + dpf.x_star{1}(k));
-    set(hcar, 'YData', py + dpf.x_star{2}(k));    
+    set(hcar, 'YData', py + dpf.x_star{2}(k));
     drawnow;
     write2gif(hfig, k, 'dubins_car.gif', 0.01);
 end
 end
+
+% -----------------------------------------------------------------------------
+% Define the Dubin's car parameters
+R = 0.5; % lower bound for the turning radius
+v = 1;   % the constant speed of the car
+
+% Setup the states and the inputs
+X     = -1    : 0.01 : 1;
+Y     = -1    : 0.01 : 0;
+THETA = -2*pi : 0.01 : 0;
+OMEGA = [-v/R 0 v/R];
+
+% Setup the horizon
+T_ocp = 0.2; % Temporal discretization step
+Tf = pi;    % Theoritical completion time, otherwise the car will go around-and-around
+t = 0 : T_ocp : Tf;
+n_horizon = length(t);
+
+% Initial and terminal states
+% We are going to make a full cricle of radius R
+x0 = [0 0 0];
+xf = [0 0 -2*pi];
+
+% Build the structure
+dpf.states              = {X, Y, THETA};
+dpf.inputs              = {OMEGA};
+dpf.T_ocp               = T_ocp;
+dpf.T_dyn               = 0.01;
+dpf.n_horizon           = length(t);
+dpf.state_update_fn     = @state_update_fn;
+dpf.stage_cost_fn       = @stage_cost_fn;
+dpf.terminal_cost_fn    = @terminal_cost_fn;
+
+% Initiate and run the solver, do forwar tracing and plot the results
+dpf = yadpf_solve(dpf);
+dpf = yadpf_trace(dpf, x0);
+yadpf_plot(dpf, '-');
+
+% Animation
+visualize(dpf);
+
+

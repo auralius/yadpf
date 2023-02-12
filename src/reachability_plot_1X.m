@@ -10,7 +10,7 @@ function reachability_plot_1X(dpf, terminal_state, terminal_tol)
 %
 % Author:
 %   Auralius Manurung
-%   Universitas Pertamina 
+%   Universitas Pertamina
 %   auralius.manurung@ieee.org
 
 %------------- BEGIN CODE --------------
@@ -32,7 +32,7 @@ buffer = zeros(n_horizon, nX);
 
 % Test for all nodes at stage-1 (every possibe ICs)
 fprintf('Generating the reachability plot...\n')
-     
+
 id = 1 : nXX;
 
 for k = 1 : n_horizon-1
@@ -69,14 +69,14 @@ plot(k, maxs);
 patch([k fliplr(k)], [mins fliplr(maxs)], 'g')
 
 xlim([1 n_horizon+1])
-xlabel(['Stage-' '$k$'], 'Interpreter','latex')
-ylabel('$x_1(k)$', 'Interpreter','latex')
+xlabel(['Stage-' 'k'], 'Interpreter','tex')
+ylabel('x_1(k)', 'Interpreter','tex')
 title('Backward Reachability Plot');
 
 ax = gca;
-ax.XTick = unique(round(ax.XTick) );
+set(ax, "XTick", unique(round(get(ax,"XTick"))));
 
-get(gca,'fontname');  
+get(gca,'fontname');
 set(gca,'fontname','times')  % Set it to times
 end
 %------------- END OF CODE --------------

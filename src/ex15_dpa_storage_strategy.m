@@ -1,11 +1,11 @@
-%% 
+%%
 % Auralius Manurung
 % ME - Universitas Pertamina
 % 2021
 %
 % Optimal storage strategy
 %
-% Jonsson, U. (2010). Optimal Control. 
+% Jonsson, U. (2010). Optimal Control.
 % See Example 1, page 2
 % https://www.math.kth.se/optsyst/grundutbildning/kurser/SF2852/LecturenotesScanned.pdf
 %
@@ -14,6 +14,26 @@ clear
 close all
 clc
 
+%% State update function
+function X = state_update_fn(X, U, dt)
+X{1} = dt*U{1} + X{1};
+end
+
+%% Stage cost function
+function J = stage_cost_fn(X, U, k, dt)
+r = 0.1; % production cost growth rate
+c = 10;  % storage cost per time unit
+J =  dt*exp(r*k*dt)*U{1} + c*X{1}*dt;
+end
+
+%% Terminal cost function
+function J = terminal_cost_fn(X)
+xf = 200;
+L = 100;
+J = L .* (xf-X{1}).^2;
+end
+
+% ------------------------------------------------------------------------------
 % Setup the states and the inputs
 X = 0 : 0.1 : 500;
 U = 0 : 0.1 : 10;
@@ -43,21 +63,4 @@ yadpf_plot(dpf, '-d');
 % Reachability plot
 yadpf_rplot(dpf, xf, 10);
 
-%% State update function
-function X = state_update_fn(X, U, dt)
-X{1} = dt*U{1} + X{1}; 
-end
 
-%% Stage cost function
-function J = stage_cost_fn(X, U, k, dt)
-r = 0.1; % production cost growth rate
-c = 10;  % storage cost per time unit
-J =  dt*exp(r*k*dt)*U{1} + c*X{1}*dt;
-end
-
-%% Terminal cost function
-function J = terminal_cost_fn(X)
-xf = 200; 
-L = 100;
-J = L .* (xf-X{1}).^2;
-end

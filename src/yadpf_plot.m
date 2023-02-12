@@ -8,11 +8,11 @@ function yadpf_plot(dpf, line_style)
 %    line_style  - The line style, similar to the line style as in the
 %                  ordinary plot command
 %
-% Outputs: -   
+% Outputs: -
 %
 % Author:
 %   Auralius Manurung
-%   Universitas Pertamina 
+%   Universitas Pertamina
 %   auralius.manurung@ieee.org
 
 %------------- BEGIN CODE --------------
@@ -35,8 +35,8 @@ for i = 1 : dpf.n_states
     plot(t, dpf.x_star{i}, line_style, 'LineWidth', 2)
     line([0 t(end)], [dpf.lb(i) dpf.lb(i)],'LineStyle','--', 'Color', 'red')
     line([0 t(end)], [dpf.ub(i) dpf.ub(i)],'LineStyle','--', 'Color', 'red')
-    xlabel('t', 'Interpreter','latex')
-    ylabel(['$x_' num2str(i) '(t)$'], 'Interpreter','latex')
+    xlabel('t', 'Interpreter','tex')
+    ylabel(['x_' num2str(i) '(t)'], 'Interpreter','tex')
     xlim([0 t(end)])
 
     active_plot = active_plot + 1;
@@ -48,8 +48,8 @@ for i = 1 : dpf.n_inputs
     stairs(t, dpf.u_star{i}, line_style, 'LineWidth', 2)
     line([0 t(end)], [min(dpf.inputs{i}) min(dpf.inputs{i})],'LineStyle','--', 'Color', 'red')
     line([0 t(end)], [max(dpf.inputs{i}) max(dpf.inputs{i})],'LineStyle','--', 'Color', 'red')
-    xlabel('t', 'Interpreter','latex')
-    ylabel(['$u_' num2str(i) '(t)$'], 'Interpreter','latex')
+    xlabel('t', 'Interpreter','tex')
+    ylabel(['u_' num2str(i) '(t)'], 'Interpreter','tex')
     xlim([0 t(end)])
 
     active_plot = active_plot + 1;

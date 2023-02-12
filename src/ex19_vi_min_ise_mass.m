@@ -2,7 +2,7 @@
 % ME - Universitas Pertamina
 % 2021
 %
-% A mass (1 kg) is moving from x=0 to x=0.5 in exactly 1 second because of 
+% A mass (1 kg) is moving from x=0 to x=0.5 in exactly 1 second because of
 % an exteral force. The damping coefficient is 0.1. At the destination, the
 % mass must stop moving. The external force is bounded (-4 N to 4 N).
 %
@@ -13,6 +13,27 @@ clear
 close all
 clc
 
+%% ========================================================================
+function X = state_update_fn(X, U, dt)
+m = 1;   % Mass
+b = 0.1; % Damping coefficient
+
+X{1} = X{1} + dt*X{2};
+X{2} = X{2} - b/m*dt.*X{2} + dt/m.*U{1};
+end
+
+%% ========================================================================
+function J = stage_cost_fn(X, U, k, dt)
+xf = [0.5 0]; % Terminal states
+
+% Control gains
+r1 = 1000;
+r2 = 10;
+
+J = dt*(r1*(X{1}-xf(1)).^2 + r2*(X{2}-xf(2)).^2);
+end
+
+% ========================================================================
 % Initial and terminal states: [Pos Vel]
 x0 = [0 0];
 xf = [0.5 0];
@@ -38,22 +59,4 @@ yadpf_plot(dpf, '-');
 % Plot the policy matrix
 yadpf_pplot(dpf);
 
-%% ========================================================================
-function X = state_update_fn(X, U, dt)
-m = 1;   % Mass
-b = 0.1; % Damping coefficient
- 
-X{1} = X{1} + dt*X{2};
-X{2} = X{2} - b/m*dt.*X{2} + dt/m.*U{1};
-end
 
-%% ========================================================================
-function J = stage_cost_fn(X, U, k, dt)
-xf = [0.5 0]; % Terminal states
-
-% Control gains
-r1 = 1000;
-r2 = 10;
-
-J = dt*(r1*(X{1}-xf(1)).^2 + r2*(X{2}-xf(2)).^2);
-end

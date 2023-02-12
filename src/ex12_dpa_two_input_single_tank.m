@@ -11,6 +11,24 @@ clear
 close all
 clc
 
+%%
+function X = state_update_fn(X, U, dt)
+X{1} = dt*(-0.5.*X{1} + U{1} + U{2}) + X{1};
+end
+
+%%
+function J = stage_cost_fn(X, U, k, dt)
+xf = 1;
+J = (U{1}.^2 + U{2}.^2)*dt + 10*dt*(X{1}-xf).^2;
+end
+
+%%
+function J = terminal_cost_fn(X)
+xf = 1;
+J = 100*(X{1}-xf).^2;
+end
+
+% ------------------------------------------------------------------------------
 % Setup the states and the inputs
 X  = 0 : 0.001 : 1;
 U1  = [0 1];
@@ -36,20 +54,4 @@ dpf = yadpf_solve(dpf);
 dpf = yadpf_trace(dpf, 0);
 yadpf_plot(dpf, '-');
 
-%%
-function X = state_update_fn(X, U, dt)
-X{1} = dt*(-0.5.*X{1} + U{1} + U{2}) + X{1};
-end
-
-%%
-function J = stage_cost_fn(X, U, k, dt)
-xf = 1;
-J = (U{1}.^2 + U{2}.^2)*dt + 10*dt*(X{1}-xf).^2;
-end
-
-%%
-function J = terminal_cost_fn(X)
-xf = 1;
-J = 100*(X{1}-xf).^2;
-end
 

@@ -4,8 +4,8 @@
 %
 % The Time-optimal van der Pol equation with a conbtrol input
 %
-% Kaya, C. Y., & Noakes, J. L. (2003). Computational Method for 
-% Time-Optimal Switching Control. Journal of Optimization Theory and 
+% Kaya, C. Y., & Noakes, J. L. (2003). Computational Method for
+% Time-Optimal Switching Control. Journal of Optimization Theory and
 % Applications, 117(1), 69–92. https://doi.org/10.1023/A:1023600422807
 %
 
@@ -13,6 +13,30 @@ clear
 close all
 clc
 
+%%
+function X = state_update_fn(X, U, dt)
+X{1} = dt*X{2} + X{1};
+X{2} = dt*(-X{1} - (X{1}.^2-1) .* X{2} + U{1}) + X{2};
+end
+
+%%
+function J = stage_cost_fn(X, U, k, dt)
+xf = [0 0];          % Terminal states
+
+q = 100;
+r = 1;
+J = dt * (q*(X{1}-xf(1)).^2 + q*(X{2}-xf(2)).^2 + r*U{1}.^2);
+end
+
+%%
+function J = terminal_cost_fn(X)
+xf = [0 0];          % Terminal states
+
+q = 100;
+J = q*(X{1}-xf(1)).^2 + q*(X{2}-xf(2)).^2;
+end
+
+% ------------------------------------------------------------------------------
 % Setup the states and the inputs
 X1 = -1   : 0.002 : 2;
 X2 = -1   : 0.002 : 1;
@@ -45,25 +69,4 @@ xlabel('$x_1$', 'Interpreter','latex')
 ylabel('$x_2$', 'Interpreter','latex')
 axis equal
 
-%%
-function X = state_update_fn(X, U, dt)  
-X{1} = dt*X{2} + X{1};
-X{2} = dt*(-X{1} - (X{1}.^2-1) .* X{2} + U{1}) + X{2};
-end
 
-%%
-function J = stage_cost_fn(X, U, k, dt)
-xf = [0 0];          % Terminal states
-
-q = 100;
-r = 1;
-J = dt * (q*(X{1}-xf(1)).^2 + q*(X{2}-xf(2)).^2 + r*U{1}.^2);
-end
-
-%%
-function J = terminal_cost_fn(X)
-xf = [0 0];          % Terminal states
-
-q = 100;
-J = q*(X{1}-xf(1)).^2 + q*(X{2}-xf(2)).^2;
-end

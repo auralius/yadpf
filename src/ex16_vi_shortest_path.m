@@ -12,6 +12,55 @@ clc
 
 global T terra_size;
 
+%% The state update function
+function X = state_update_fn(X, U, ~)
+X{1} = X{1} + U{1};
+X{2} = X{2} + U{2};
+end
+
+%% The stage cost function
+function J = stage_cost_fn(X, U, k, ~)
+global terra_size;
+
+r = terra_size(1);
+c = terra_size(2);
+
+% First, check where the car's next position for a selected input
+X_to = state_update_fn(X, U);
+X_to{1} = min(max(X_to{1},1),r);
+X_to{2} = min(max(X_to{2},1),c);
+
+% Next, compute the height difference of the current position to the next
+% position
+dh = get_height_difference(X{1}, X{2}, X_to{1}, X_to{2});
+
+% Target / final states
+xf = [50 60];
+
+% Finally, compute the cost
+k1 = 10000;
+k2 = 0.5;
+k3 = 0.5;
+
+J =  k1*max(dh,0) + k2*(X{1}-xf(1)).^2 + k3.*(X{2}-xf(2)).^2;
+end
+
+%% This function computes the height differece between two location
+%  coordinates
+function dh = get_height_difference(x_from, y_from, x_to, y_to)
+global T terra_size;
+
+r = terra_size(1);
+c = terra_size(2);
+
+to_id = sub2ind([r c], x_to, y_to);
+from_id = sub2ind([r c], x_from, y_from);
+
+dh = T(to_id) - T(from_id);
+
+end
+
+% ------------------------------------------------------------------------------
 % Terrain1.mat, from 1 to 4225 (64x64)
 % Terrain2.mat, from 1 to 16641 (129x129)
 load ('Terrain1.mat');
@@ -49,50 +98,4 @@ xlabel('x')
 ylabel('y')
 axis equal
 
-%% The state update function
-function X = state_update_fn(X, U, ~)
-X{1} = X{1} + U{1};
-X{2} = X{2} + U{2};
-end
 
-%% The stage cost function
-function J = stage_cost_fn(X, U, k, ~)
-global terra_size;
-
-r = terra_size(1);
-c = terra_size(2);
-
-% First, check where the car's next position for a selected input
-X_to = state_update_fn(X, U);
-X_to{1} = min(max(X_to{1},1),r);
-X_to{2} = min(max(X_to{2},1),c);
-
-% Next, compute the height difference of the current position to the next
-% position
-dh = get_height_difference(X{1}, X{2}, X_to{1}, X_to{2});
-
-% Target / final states
-xf = [50 60];
-
-% Finally, compute the cost
-k1 = 10000;
-k2 = 0.5;
-k3 = 0.5;
-
-J =  k1*max(dh,0) + k2*(X{1}-xf(1)).^2 + k3.*(X{2}-xf(2)).^2;
-end
-
-%% This function computes the height differece between two location 
-%  coordinates
-function dh = get_height_difference(x_from, y_from, x_to, y_to)
-global T terra_size;
-
-r = terra_size(1);
-c = terra_size(2);
-
-to_id = sub2ind([r c], x_to, y_to);
-from_id = sub2ind([r c], x_from, y_from);
-
-dh = T(to_id) - T(from_id);
-
-end
