@@ -10,6 +10,8 @@ This is sitll an ongoing work. Please check [here](https://www.mathcha.io/editor
 
 Also, please check our published paper [here](https://doi.org/10.1016/j.softx.2022.101001).
 
+__The GNU Octave__ compatible version can be found [here](https://github.com/auralius/yadpf/tree/octave).
+
 
 ## Ex.1 : Sutton's mountain car problem
 
