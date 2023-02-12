@@ -27,38 +27,32 @@ descendant_matrix = dpf.descendant_matrix;
 
 clear dpf;
 
-x_star = zeros(1, n_horizon);
-buffer = zeros(nX, n_horizon);
+x_star = zeros(n_horizon, nX);
+buffer = zeros(n_horizon, nX);
 
 % Test for all nodes at stage-1 (every possibe ICs)
 fprintf('Generating the reachability plot...\n')
-fprintf('Progress: ')
-ll = 0;
+     
+id = 1 : nXX;
 
-step = max(floor(nXX/10), 1);
+for k = 1 : n_horizon-1
+    x_star(k, :) = states{1}(id);
+    id = descendant_matrix(k,id);
+end
+
+% The last stage
+x_star(n_horizon, :) = states{1}(id);
+
+% Check the terminal stage, does it end at the desired terminal node?
 for j = 1 : nXX
-    if rem(j-1, step) == 0
-        fprintf(repmat('\b',1,ll));
-        ll = fprintf('%.1f %%',(j-1) / nXX*100);
-    end
-       
-    id = j;
-    
-    for k = 1 : n_horizon-1
-        x_star(k) = states{1}(id);
-        id = descendant_matrix(k,id);
-    end
-    
-    % The last stage
-    x_star(n_horizon) = states{1}(id);
-    
-    % Check the terminal stage, does it end at the desired terminal node?
-    if abs(states{1}(id) - terminal_state) < terminal_tol
-        buffer(j,:) = x_star;     % If yes, keep them
+    if abs(states{1}(id(j)) - terminal_state) < terminal_tol
+        buffer(:, j) = x_star(:, j);     % If yes, keep them
     end
 end
 
-fprintf('\nComplete!\n')
+fprintf('Complete!\n')
+
+buffer = transpose(buffer);
 
 % Plot only the maximums and the minimums, color the area in between.
 buffer(~any(buffer, 2), :) = [];  % Delete rows that are all zeros
