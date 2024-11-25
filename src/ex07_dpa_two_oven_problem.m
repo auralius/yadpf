@@ -30,7 +30,7 @@ dpf.state_update_fn     = @state_update_fn;
 dpf.stage_cost_fn       = @stage_cost_fn;
 dpf.terminal_cost_fn    = @terminal_cost_fn;
 
-% Initiate and run the solver, do forwar tracing and plot the results
+% Initiate and run the solver, do forward tracing and plot the results
 dpf = yadpf_solve(dpf);
 dpf = yadpf_trace(dpf, x0);
 yadpf_plot(dpf, '-');

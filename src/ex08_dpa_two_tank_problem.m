@@ -43,7 +43,7 @@ yadpf_plot(dpf, '-');
 
 % Reachability plot, this takes time and the plot will not be very
 % responsive!
-yadpf_rplot(dps, [0.5 0.5], 0.01); 
+yadpf_rplot(dpf, [0.5 0.5], 0.01); 
 
 %%
 function X = state_update_fn(X, U, dt)

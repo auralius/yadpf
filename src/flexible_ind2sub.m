@@ -5,7 +5,11 @@ function b = flexible_ind2sub(sz, ind)
 %------------- BEGIN CODE --------------
 
 b = cell(1, length(sz));
-[b{:}] = ind2sub(sz, ind);
+if size(sz, 2) == 1
+    [b{:}] = ind2sub([1, sz], ind);
+else
+    [b{:}] = ind2sub(sz, ind);
+end
 
 end
 %------------- END OF CODE --------------

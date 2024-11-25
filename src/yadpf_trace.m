@@ -44,7 +44,11 @@ for k = 1 : dpf.n_horizon-1
     
     s_id = dpf.descendant_matrix(k, s_id);
     
-    [s_sub{:}]  = ind2sub(dpf.nX, s_id); 
+    if size(dpf.nX, 2) == 1
+        [s_sub{:}]  = ind2sub([1, dpf.nX], s_id); 
+    else
+        [s_sub{:}]  = ind2sub(dpf.nX, s_id); 
+    end
     
     for i = 1 : dpf.n_states
         x_star_lores{i}(k+1) = dpf.states{i}(s_sub{i});        
